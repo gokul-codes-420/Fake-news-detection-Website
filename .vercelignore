@@ -1,0 +1,7 @@
+.venv
+.ipynb_checkpoints
+Fake_News_Detector-PA.ipynb
+dataset
+Images
+*.pyc
+__pycache__

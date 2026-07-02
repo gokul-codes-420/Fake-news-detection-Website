@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prediction | TruthShield</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      #mobile-menu { display: none; }
+      #mobile-menu.open { display: block; }
+    </style>
+  </head>
+  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="text-lg font-black tracking-tight">Truth<span class="font-light">Shield</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
+            <a href="/" class="hover:text-gray-900 transition-colors">Home</a>
+            <a href="/predict" class="text-gray-900 font-semibold border-b-2 border-gray-900 pb-0.5">Prediction</a>
+            <a href="/about" class="hover:text-gray-900 transition-colors">About</a>
+            <a href="/contact" class="hover:text-gray-900 transition-colors">Contact</a>
+          </nav>
+          {% if user %}
+          <div class="flex items-center gap-2">
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
+            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+            <a href="/logout" class="text-xs font-semibold text-gray-400 hover:text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
+          </div>
+          {% endif %}
+        </div>
+        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+          <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-white px-4 pb-4">
+        <nav class="flex flex-col gap-1 pt-3">
+          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Home</a>
+          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 bg-gray-50">Prediction</a>
+          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">About</a>
+          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Contact</a>
+        </nav>
+        {% if user %}
+        <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
+            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+          </div>
+          <a href="/logout" class="text-xs font-semibold text-gray-400 border border-gray-200 px-3 py-1.5 rounded-lg">Sign out</a>
+        </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8 sm:py-14 flex-grow w-full max-w-2xl">
+      <!-- Title -->
+      <div class="mb-7 sm:mb-10">
+        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Fake News Verification</h1>
+        <p class="text-xs sm:text-sm text-gray-400 font-light mt-1">Enter a headline, article text, or upload an image to verify its authenticity.</p>
+      </div>
+
+      <!-- LIVE FACT CHECK RESULT -->
+      {% if fact_check %}
+      <div class="mb-5">
+        {% if fact_check.success %}
+          {% if 'FALSE' in fact_check.verdict.upper() %}
+          <div class="border border-red-200 bg-red-50 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-red-100 text-red-600 p-1.5 rounded-md flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" /></svg>
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Live Fact Check</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-red-600">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            {% if fact_check.sources %}
+            <div class="mt-3 pt-3 border-t border-red-100">
+              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <div class="flex flex-wrap gap-2">
+                {% for src in fact_check.sources %}
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% elif 'TRUE' in fact_check.verdict.upper() %}
+          <div class="border border-green-200 bg-green-50 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-green-100 text-green-600 p-1.5 rounded-md flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Live Fact Check</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-green-700">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            {% if fact_check.sources %}
+            <div class="mt-3 pt-3 border-t border-green-100">
+              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <div class="flex flex-wrap gap-2">
+                {% for src in fact_check.sources %}
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="border border-yellow-200 bg-yellow-50 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-yellow-100 text-yellow-600 p-1.5 rounded-md flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Live Fact Check</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-yellow-700">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            {% if fact_check.sources %}
+            <div class="mt-3 pt-3 border-t border-yellow-100">
+              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <div class="flex flex-wrap gap-2">
+                {% for src in fact_check.sources %}
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% else %}
+        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">API Fact-Check Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 font-light mt-0.5">{{ fact_check.error }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- ML RESULT -->
+      {% if prediction_text %}
+      <div class="mb-5">
+        {% if is_fake %}
+        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+          <div class="w-8 h-8 bg-red-100 text-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">ML Model Verdict</p>
+            <p class="text-sm sm:text-base font-bold text-gray-900 mt-0.5">{{ prediction_text }}</p>
+            <p class="text-xs text-gray-400 font-light mt-1">Matches training data for unreliable reporting.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+          <div class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">ML Model Verdict</p>
+            <p class="text-sm sm:text-base font-bold text-gray-900 mt-0.5">{{ prediction_text }}</p>
+            <p class="text-xs text-gray-400 font-light mt-1">Matches training data for verified reporting.</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- FORM CARD -->
+      <div class="border border-gray-200 rounded-xl p-4 sm:p-6 bg-white">
+        <!-- Tabs — 2x2 grid on mobile -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 bg-gray-100 p-1 rounded-lg gap-1 mb-5 text-xs font-semibold">
+          <button type="button" id="tab-headline" onclick="setMode('headline')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Headline</button>
+          <button type="button" id="tab-article" onclick="setMode('article')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Full Article</button>
+          <button type="button" id="tab-auto" onclick="setMode('auto')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Auto-Detect</button>
+          <button type="button" id="tab-image" onclick="setMode('image')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Image</button>
+        </div>
+
+        <form action="/predict" method="POST" enctype="multipart/form-data" class="space-y-4">
+          <input type="hidden" name="predict_type" id="predict_type" value="{{ predict_type or 'headline' }}">
+
+          <!-- Text -->
+          <div id="text-input-container">
+            <label for="news" id="input-label" class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wider">Enter News Headline</label>
+            <textarea name="news" id="news" rows="5" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 sm:px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition-all font-light resize-none" placeholder="Type or paste text here...">{{ input_text or '' }}</textarea>
+            <p id="input-help" class="text-xs text-gray-400 font-light mt-1.5">Short-sentence feature vector analysis.</p>
+          </div>
+
+          <!-- Image -->
+          <div id="image-input-container" class="hidden">
+            <label class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wider">Upload News Image</label>
+            <div class="border-2 border-dashed border-gray-200 rounded-lg p-8 sm:p-10 text-center bg-gray-50 hover:border-gray-400 transition-all cursor-pointer flex flex-col items-center" onclick="document.getElementById('news_image').click();">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-300 mb-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" />
+              </svg>
+              <span id="file-name" class="text-sm text-gray-400 font-light">Tap to upload image</span>
+              <span class="text-xs text-gray-300 mt-1">PNG, JPG, JPEG, WEBP</span>
+              <input type="file" id="news_image" name="news_image" accept="image/*" class="hidden" onchange="showFileName(this)">
+            </div>
+            <p class="text-xs text-gray-400 font-light mt-1.5">Gemini analyzes visual and text content inside the image.</p>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="w-full bg-gray-900 hover:bg-gray-700 active:scale-[0.98] text-white text-sm font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
+            Verify Content
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196 7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <footer class="border-t border-gray-100 py-6 text-center text-xs text-gray-400 font-light">
+      <p>&copy; 2026 TruthShield. All rights reserved.</p>
+    </footer>
+
+    <script>
+      function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const iconMenu = document.getElementById('icon-menu');
+        const iconClose = document.getElementById('icon-close');
+        menu.classList.toggle('open');
+        iconMenu.classList.toggle('hidden');
+        iconClose.classList.toggle('hidden');
+      }
+
+      function showFileName(input) {
+        const label = document.getElementById('file-name');
+        if (input.files && input.files[0]) {
+          label.innerText = input.files[0].name;
+          label.classList.add('font-medium', 'text-gray-700');
+        } else {
+          label.innerText = 'Tap to upload image';
+          label.classList.remove('font-medium', 'text-gray-700');
+        }
+      }
+
+      function setMode(mode) {
+        document.getElementById('predict_type').value = mode;
+        const tabs = ['headline', 'article', 'auto', 'image'];
+        tabs.forEach(t => {
+          const btn = document.getElementById(`tab-${t}`);
+          if (btn) btn.className = 'py-2.5 rounded-md text-center transition-all cursor-pointer text-gray-500 hover:text-gray-800';
+        });
+        const active = document.getElementById(`tab-${mode}`);
+        if (active) active.className = 'py-2.5 rounded-md text-center transition-all cursor-pointer bg-white text-gray-900 shadow-sm font-bold';
+
+        const label = document.getElementById('input-label');
+        const textarea = document.getElementById('news');
+        const help = document.getElementById('input-help');
+        const textBox = document.getElementById('text-input-container');
+        const imgBox = document.getElementById('image-input-container');
+
+        if (mode === 'image') {
+          textBox.classList.add('hidden');
+          imgBox.classList.remove('hidden');
+          textarea.removeAttribute('required');
+        } else {
+          textBox.classList.remove('hidden');
+          imgBox.classList.add('hidden');
+          textarea.setAttribute('required', 'required');
+          if (mode === 'headline') {
+            label.innerText = 'Enter News Headline';
+            textarea.placeholder = 'Enter the title or short headline...';
+            help.innerText = 'Short-sentence feature vector analysis.';
+          } else if (mode === 'article') {
+            label.innerText = 'Enter Full Article Text';
+            textarea.placeholder = 'Paste the full article body here...';
+            help.innerText = 'Deep word relationship and context analysis.';
+          } else {
+            label.innerText = 'Enter News Content';
+            textarea.placeholder = 'Paste headline or full article here...';
+            help.innerText = 'Auto-selects optimal model based on length.';
+          }
+        }
+      }
+      setMode(document.getElementById('predict_type').value);
+    </script>
+  </body>
+</html>
