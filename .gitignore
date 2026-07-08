@@ -1,1 +1,7 @@
-.vercel
+.venv/
+__pycache__/
+*.pyc
+.env
+history.json
+contacts.json
+.vercel/
