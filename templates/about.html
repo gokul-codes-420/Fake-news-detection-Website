@@ -4,58 +4,119 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>About | TruthShield</title>
+        
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Inter', sans-serif; }
       #mobile-menu { display: none; }
       #mobile-menu.open { display: block; }
     </style>
-  </head>
-  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+  
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+      function toggleDarkMode() {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      }
+    </script>
+  
+    <style>
+      /* Page Transition */
+      body {
+        opacity: 0;
+        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(12px);
+      }
+      body.page-loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('page-loaded');
+        });
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.add('page-loaded');
+        }
+      });
+    </script>
+</head>
 
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+  <body class="bg-white dark:bg-slate-900 text-gray-900 dark:text-white min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
       <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-white">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span class="text-lg font-black tracking-tight">Truth<span class="font-light">Shield</span></span>
         </a>
         <div class="hidden md:flex items-center gap-8">
-          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
-            <a href="/" class="hover:text-gray-900 transition-colors">Home</a>
-            <a href="/predict" class="hover:text-gray-900 transition-colors">Prediction</a>
-            <a href="/about" class="text-gray-900 font-semibold border-b-2 border-gray-900 pb-0.5">About</a>
-            <a href="/contact" class="hover:text-gray-900 transition-colors">Contact</a>
+          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-slate-400">
+            <a href="/" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Home</a>
+            <a href="/predict" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Prediction</a>
+            <a href="/phone" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Phone Check</a>
+            <a href="/about" class="text-gray-900 dark:text-white font-semibold border-b-2 border-gray-900 dark:border-white pb-0.5">About</a>
+            <a href="/contact" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Contact</a>
+          
+            <button onclick="toggleDarkMode()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" aria-label="Toggle Dark Mode">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 dark:hidden">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            </button>
           </nav>
           {% if user %}
           <div class="flex items-center gap-2">
-            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
-            <a href="/logout" class="text-xs font-semibold text-gray-400 hover:text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">{% endif %}
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
+            <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
           </div>
           {% endif %}
         </div>
-        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-700 transition-colors">
           <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
           <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
-      <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-white px-4 pb-4">
+      <div id="mobile-menu" class="md:hidden border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4">
         <nav class="flex flex-col gap-1 pt-3">
-          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Home</a>
-          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Prediction</a>
-          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 bg-gray-50">About</a>
-          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Contact</a>
+          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800">Home</a>
+          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800">Prediction</a>
+          <a href="/phone" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Phone Check</a>
+          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800">About</a>
+          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800">Contact</a>
+          <button onclick="toggleDarkMode()" class="px-3 py-2.5 text-left rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">Toggle Theme</button>
         </nav>
         {% if user %}
-        <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">{% endif %}
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
           </div>
-          <a href="/logout" class="text-xs font-semibold text-gray-400 border border-gray-200 px-3 py-1.5 rounded-lg">Sign out</a>
+          <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg">Sign out</a>
         </div>
         {% endif %}
       </div>
@@ -63,65 +124,65 @@
 
     <main class="container mx-auto px-4 sm:px-6 py-8 sm:py-14 flex-grow max-w-3xl">
       <div class="mb-8 sm:mb-12">
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">About the Project</h1>
-        <p class="text-xs sm:text-sm text-gray-400 font-light mt-1">The architecture, dataset, and ML pipeline behind TruthShield.</p>
+        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">About the Project</h1>
+        <p class="text-xs sm:text-sm text-gray-400 dark:text-slate-500 font-light mt-1">The architecture, dataset, and ML pipeline behind TruthShield.</p>
       </div>
 
       <div class="space-y-5 sm:space-y-8">
-        <section class="border border-gray-200 rounded-xl p-5 sm:p-7">
-          <h2 class="text-sm sm:text-base font-bold text-gray-900 mb-3">How It Works</h2>
-          <p class="text-xs sm:text-sm text-gray-500 font-light leading-relaxed mb-4">
+        <section class="border border-gray-200 dark:border-slate-700 rounded-xl p-5 sm:p-7">
+          <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-3">How It Works</h2>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light leading-relaxed mb-4">
             TruthShield analyzes written content for misinformation signals, sensationalism, and unreliable language patterns.
           </p>
-          <div class="space-y-2 text-xs sm:text-sm text-gray-500 font-light">
+          <div class="space-y-2 text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light">
             <div class="flex flex-col sm:flex-row sm:items-start gap-1">
-              <span class="font-bold text-gray-900 flex-shrink-0">Headline Mode</span>
-              <span class="sm:ml-1">— trained on short news titles. Accuracy: <strong class="text-gray-900">92.29%</strong></span>
+              <span class="font-bold text-gray-900 dark:text-white flex-shrink-0">Headline Mode</span>
+              <span class="sm:ml-1">— trained on short news titles. Accuracy: <strong class="text-gray-900 dark:text-white">92.29%</strong></span>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-start gap-1">
-              <span class="font-bold text-gray-900 flex-shrink-0">Article Mode</span>
-              <span class="sm:ml-1">— evaluates full article bodies. Accuracy: <strong class="text-gray-900">93.50%</strong></span>
+              <span class="font-bold text-gray-900 dark:text-white flex-shrink-0">Article Mode</span>
+              <span class="sm:ml-1">— evaluates full article bodies. Accuracy: <strong class="text-gray-900 dark:text-white">93.50%</strong></span>
             </div>
           </div>
         </section>
 
-        <section class="border border-gray-200 rounded-xl p-5 sm:p-7">
-          <h2 class="text-sm sm:text-base font-bold text-gray-900 mb-4">ML Pipeline</h2>
+        <section class="border border-gray-200 dark:border-slate-700 rounded-xl p-5 sm:p-7">
+          <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-4">ML Pipeline</h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-              <p class="text-xs font-bold text-gray-900 mb-1">1. Preprocessing</p>
-              <p class="text-xs text-gray-400 font-light">Removes special characters, tokenizes, strips stop words, and lemmatizes to root forms.</p>
+            <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-bold text-gray-900 dark:text-white mb-1">1. Preprocessing</p>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light">Removes special characters, tokenizes, strips stop words, and lemmatizes to root forms.</p>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-              <p class="text-xs font-bold text-gray-900 mb-1">2. Vectorization</p>
-              <p class="text-xs text-gray-400 font-light">TF-IDF converts word frequency into numerical weight vectors.</p>
+            <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-bold text-gray-900 dark:text-white mb-1">2. Vectorization</p>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light">TF-IDF converts word frequency into numerical weight vectors.</p>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-              <p class="text-xs font-bold text-gray-900 mb-1">3. Classification</p>
-              <p class="text-xs text-gray-400 font-light">Passive-Aggressive Classifier flags unreliable content with a high-dimensional boundary.</p>
+            <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-bold text-gray-900 dark:text-white mb-1">3. Classification</p>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light">Passive-Aggressive Classifier flags unreliable content with a high-dimensional boundary.</p>
             </div>
           </div>
         </section>
 
-        <section class="border border-gray-200 rounded-xl p-5 sm:p-7">
-          <h2 class="text-sm sm:text-base font-bold text-gray-900 mb-5">Performance Metrics</h2>
+        <section class="border border-gray-200 dark:border-slate-700 rounded-xl p-5 sm:p-7">
+          <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-5">Performance Metrics</h2>
           <div class="space-y-5">
             <div>
               <div class="flex justify-between mb-1.5">
-                <span class="text-xs sm:text-sm text-gray-600 font-light">Headline Mode</span>
-                <span class="text-xs sm:text-sm font-bold text-gray-900">92.29%</span>
+                <span class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light">Headline Mode</span>
+                <span class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">92.29%</span>
               </div>
-              <div class="w-full bg-gray-100 rounded-full h-1.5">
-                <div class="bg-gray-900 h-1.5 rounded-full" style="width: 92.29%"></div>
+              <div class="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-1.5">
+                <div class="bg-gray-900 dark:bg-indigo-600 h-1.5 rounded-full" style="width: 92.29%"></div>
               </div>
             </div>
             <div>
               <div class="flex justify-between mb-1.5">
-                <span class="text-xs sm:text-sm text-gray-600 font-light">Full Article Mode</span>
-                <span class="text-xs sm:text-sm font-bold text-gray-900">93.50%</span>
+                <span class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light">Full Article Mode</span>
+                <span class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">93.50%</span>
               </div>
-              <div class="w-full bg-gray-100 rounded-full h-1.5">
-                <div class="bg-gray-900 h-1.5 rounded-full" style="width: 93.5%"></div>
+              <div class="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-1.5">
+                <div class="bg-gray-900 dark:bg-indigo-600 h-1.5 rounded-full" style="width: 93.5%"></div>
               </div>
             </div>
           </div>
@@ -129,9 +190,27 @@
       </div>
     </main>
 
-    <footer class="border-t border-gray-100 py-6 text-center text-xs text-gray-400 font-light">
-      <p>&copy; 2026 TruthShield. All rights reserved.</p>
-      <p class="mt-1">Built with Python, Flask, Scikit-learn, NLTK, and Gemini API.</p>
+    <footer class="border-t border-gray-100 dark:border-slate-800 py-8 px-4">
+      <div class="max-w-5xl mx-auto flex flex-col items-center gap-5">
+        <div class="flex items-center gap-5">
+          <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-lg hover:shadow-pink-100 dark:hover:shadow-pink-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-pink-500 transition-colors duration-300"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors duration-300"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com" target="_blank" aria-label="GitHub" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-gray-700 dark:hover:border-gray-400 hover:shadow-lg hover:shadow-gray-200 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://wa.me/" target="_blank" aria-label="WhatsApp" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg hover:shadow-green-100 dark:hover:shadow-green-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-green-500 transition-colors duration-300"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+        <div class="text-center">
+          <p class="text-xs text-gray-400 dark:text-slate-500 font-light">&copy; 2026 TruthShield. All rights reserved.</p>
+          <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1">Built with Python, Flask, Scikit-learn, NLTK, and Gemini API.</p>
+        </div>
+      </div>
     </footer>
 
     <script>
@@ -144,5 +223,22 @@
         iconClose.classList.toggle('hidden');
       }
     </script>
-  </body>
+  
+    <script>
+      document.querySelectorAll('a[href^="/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.target === '_blank' || e.ctrlKey || e.metaKey) return;
+          const target = this.href;
+          
+          // Exception for toggle theme button, auth links, or anchors
+          if(this.getAttribute('href').startsWith('#') || this.hasAttribute('onclick') || this.getAttribute('href') === '/logout') return;
+
+          e.preventDefault();
+          document.body.classList.remove('page-loaded');
+          setTimeout(() => { window.location.href = target; }, 100);
+        });
+      });
+    </script>
+</body>
+
 </html>

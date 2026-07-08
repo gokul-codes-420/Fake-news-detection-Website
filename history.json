@@ -1,0 +1,118 @@
+[
+    {
+        "id": "hist_1783510455_dddf7b",
+        "user_email": "gokuldeveloper4979@gmail.com",
+        "predict_type": "phone",
+        "input_text": "9361033010",
+        "timestamp": "2026-07-08T17:04:15.082009",
+        "results": {
+            "phone_result": {
+                "success": true,
+                "country": "India \ud83c\uddee\ud83c\uddf3",
+                "format_valid": "Valid",
+                "risk_level": "Medium \ud83d\udfe1",
+                "line_type": "Mobile",
+                "spam_probability": "Medium",
+                "suggestions": [
+                    "Be cautious if you receive unsolicited calls or messages from this number.",
+                    "Verify the caller's identity if they claim to be from a known organization.",
+                    "Avoid sharing personal or financial information over the phone unless you initiated the call and are certain of the recipient.",
+                    "Consider using caller ID and spam blocking applications."
+                ]
+            }
+        }
+    },
+    {
+        "id": "hist_1783510791_9386d5",
+        "user_email": "gokuldeveloper4979@gmail.com",
+        "predict_type": "phone",
+        "input_text": "9361033010",
+        "timestamp": "2026-07-08T17:09:51.994963",
+        "results": {
+            "phone_result": {
+                "success": true,
+                "country": "India \ud83c\uddee\ud83c\uddf3",
+                "format_valid": "Valid",
+                "risk_level": "Medium \ud83d\udfe1",
+                "line_type": "Mobile",
+                "spam_probability": "Medium",
+                "suggestions": [
+                    "Always verify the identity of unknown callers, especially if they request personal information.",
+                    "Do not share sensitive personal or financial details over the phone unless you initiated the call and are certain of the recipient's identity.",
+                    "Consider using a reliable caller ID and spam blocking application to identify and filter unwanted calls.",
+                    "If the call seems suspicious or requests immediate action, hang up and independently verify the information through official channels."
+                ]
+            }
+        }
+    },
+    {
+        "id": "hist_1783512106_3d153a",
+        "user_email": "gokuldeveloper4979@gmail.com",
+        "predict_type": "phone",
+        "input_text": "9361033010",
+        "timestamp": "2026-07-08T17:31:46.300431",
+        "results": {
+            "phone_result": {
+                "success": true,
+                "country": "India \ud83c\uddee\ud83c\uddf3",
+                "format_valid": "Valid",
+                "risk_level": "Medium \ud83d\udfe1",
+                "line_type": "Mobile",
+                "spam_probability": "Medium",
+                "suggestions": [
+                    "Do not share personal or financial information with unknown callers.",
+                    "If the call is unexpected, verify the caller's identity through an independent source before engaging.",
+                    "Be cautious of unsolicited calls, especially those asking for immediate action or payment.",
+                    "Consider using call blocking or spam filtering apps if you receive unwanted calls from this number.",
+                    "If you suspect a scam, report the number to relevant authorities."
+                ]
+            }
+        }
+    },
+    {
+        "id": "hist_1783512243_7e62ee",
+        "user_email": "gokuldeveloper4979@gmail.com",
+        "predict_type": "phone",
+        "input_text": "9361033010",
+        "timestamp": "2026-07-08T17:34:03.144407",
+        "results": {
+            "phone_result": {
+                "success": true,
+                "country": "India \ud83c\uddee\ud83c\uddf3",
+                "format_valid": "Valid",
+                "risk_level": "Medium \ud83d\udfe1",
+                "line_type": "Mobile",
+                "spam_probability": "Medium",
+                "suggestions": [
+                    "Exercise caution when answering calls from unknown numbers.",
+                    "Avoid sharing personal or financial information unless the caller's identity is verified.",
+                    "Consider using a call blocking application if you receive unsolicited calls.",
+                    "Report any suspicious activity or persistent unwanted calls to relevant authorities or your service provider."
+                ]
+            }
+        }
+    },
+    {
+        "id": "hist_1783512259_fa34e6",
+        "user_email": "gokuldeveloper4979@gmail.com",
+        "predict_type": "phone",
+        "input_text": "9361033010",
+        "timestamp": "2026-07-08T17:34:19.494753",
+        "results": {
+            "phone_result": {
+                "success": true,
+                "country": "India \ud83c\uddee\ud83c\uddf3",
+                "format_valid": "Valid",
+                "risk_level": "Medium \ud83d\udfe1",
+                "line_type": "Mobile",
+                "spam_probability": "Medium",
+                "suggestions": [
+                    "Exercise caution if the caller requests personal or financial information.",
+                    "Verify the caller's identity through official channels if they claim to represent a company or organization.",
+                    "Consider blocking the number if you receive unsolicited calls or perceive it as spam.",
+                    "Do not click on suspicious links sent via SMS from this number."
+                ]
+            }
+        }
+    }
+]

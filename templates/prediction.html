@@ -4,59 +4,141 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Prediction | TruthShield</title>
+        
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Inter', sans-serif; }
       #mobile-menu { display: none; }
       #mobile-menu.open { display: block; }
     </style>
-  </head>
-  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+  
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+
+      // --- Voice Read ---
+      function voiceRead(textId, btn) {
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+          btn.innerHTML = '🔊 Voice Read';
+          return;
+        }
+        let textElement = document.getElementById(textId);
+        if(!textElement) return;
+        
+        let text = textElement.innerText;
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95; 
+        utterance.onend = () => { btn.innerHTML = '🔊 Voice Read'; };
+        btn.innerHTML = '🛑 Stop Reading';
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function toggleDarkMode() {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      }
+    </script>
+  
+    <style>
+      /* Page Transition */
+      body {
+        opacity: 0;
+        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(12px);
+      }
+      body.page-loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('page-loaded');
+        });
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.add('page-loaded');
+        }
+      });
+    </script>
+</head>
+
+  <body class="bg-white dark:bg-slate-900 text-gray-900 dark:text-white min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
       <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-white">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span class="text-lg font-black tracking-tight">Truth<span class="font-light">Shield</span></span>
         </a>
         <div class="hidden md:flex items-center gap-8">
-          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
-            <a href="/" class="hover:text-gray-900 transition-colors">Home</a>
-            <a href="/predict" class="text-gray-900 font-semibold border-b-2 border-gray-900 pb-0.5">Prediction</a>
-            <a href="/about" class="hover:text-gray-900 transition-colors">About</a>
-            <a href="/contact" class="hover:text-gray-900 transition-colors">Contact</a>
+          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-slate-400">
+            <a href="/" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Home</a>
+            <a href="/predict" class="text-gray-900 dark:text-white font-semibold border-b-2 border-gray-900 dark:border-white pb-0.5">Prediction</a>
+            <a href="/phone" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Phone Check</a>
+            <a href="/learn" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Learn</a>
+            <a href="/about" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">About</a>
+            <a href="/contact" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Contact</a>
+          
+            <button onclick="toggleDarkMode()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" aria-label="Toggle Dark Mode">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 dark:hidden">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            </button>
           </nav>
           {% if user %}
           <div class="flex items-center gap-2">
-            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
-            <a href="/logout" class="text-xs font-semibold text-gray-400 hover:text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">{% endif %}
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
+            <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
           </div>
           {% endif %}
         </div>
-        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-700 transition-colors">
           <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
           <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
-      <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-white px-4 pb-4">
+      <div id="mobile-menu" class="md:hidden border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4">
         <nav class="flex flex-col gap-1 pt-3">
-          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Home</a>
-          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 bg-gray-50">Prediction</a>
-          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">About</a>
-          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Contact</a>
+          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Home</a>
+          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800">Prediction</a>
+          <a href="/phone" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Phone Check</a>
+          <a href="/learn" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Learn</a>
+          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">About</a>
+          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Contact</a>
+          <button onclick="toggleDarkMode()" class="px-3 py-2.5 text-left rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">Toggle Theme</button>
         </nav>
         {% if user %}
-        <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">{% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+            {% if user.picture %}<img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">{% endif %}
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
           </div>
-          <a href="/logout" class="text-xs font-semibold text-gray-400 border border-gray-200 px-3 py-1.5 rounded-lg">Sign out</a>
+          <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg">Sign out</a>
         </div>
         {% endif %}
       </div>
@@ -65,13 +147,13 @@
     <main class="container mx-auto px-4 sm:px-6 py-8 sm:py-14 flex-grow w-full max-w-2xl">
       <!-- Title -->
       <div class="mb-7 sm:mb-10">
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Fake News Verification</h1>
-        <p class="text-xs sm:text-sm text-gray-400 font-light mt-1">Enter a headline, article text, or upload an image to verify its authenticity.</p>
+        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">TruthShield Verification Hub</h1>
+        <p class="text-xs sm:text-sm text-gray-400 dark:text-slate-500 font-light mt-1">Verify news, media files, SMS messages, links, shopping deals, and advertisements using AI.</p>
       </div>
 
       <!-- LIVE FACT CHECK RESULT -->
       {% if fact_check %}
-      <div class="mb-5">
+      <div id="result-fact-check" class="mb-5">
         {% if fact_check.success %}
           {% if 'FALSE' in fact_check.verdict.upper() %}
           <div class="border border-red-200 bg-red-50 rounded-xl p-4 sm:p-5">
@@ -81,14 +163,15 @@
               </span>
               <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Live Fact Check</span>
             </div>
-            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-red-600">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-red-600">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
             {% if fact_check.sources %}
             <div class="mt-3 pt-3 border-t border-red-100">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
               <div class="flex flex-wrap gap-2">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
                 {% endfor %}
               </div>
             </div>
@@ -102,14 +185,15 @@
               </span>
               <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Live Fact Check</span>
             </div>
-            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-green-700">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-green-700">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
             {% if fact_check.sources %}
             <div class="mt-3 pt-3 border-t border-green-100">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
               <div class="flex flex-wrap gap-2">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
                 {% endfor %}
               </div>
             </div>
@@ -123,14 +207,15 @@
               </span>
               <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Live Fact Check</span>
             </div>
-            <p class="text-sm font-bold text-gray-900">Verdict: <span class="text-yellow-700">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 font-light mt-1 leading-relaxed">{{ fact_check.explanation }}</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-yellow-700">{{ fact_check.verdict }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
             {% if fact_check.sources %}
             <div class="mt-3 pt-3 border-t border-yellow-100">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Sources</p>
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
               <div class="flex flex-wrap gap-2">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 border border-gray-200 bg-white px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
                 {% endfor %}
               </div>
             </div>
@@ -138,54 +223,457 @@
           </div>
           {% endif %}
         {% else %}
-        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 flex items-start gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">API Fact-Check Failed</p>
-            <p class="text-xs sm:text-sm text-gray-600 font-light mt-0.5">{{ fact_check.error }}</p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">API Fact-Check Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ fact_check.error }}</p>
           </div>
         </div>
         {% endif %}
       </div>
       {% endif %}
 
-      <!-- ML RESULT -->
+      <!-- ML RESULT — hidden if Gemini Fact Check already says TRUE -->
       {% if prediction_text %}
-      <div class="mb-5">
+      {% if not (fact_check and fact_check.success and 'TRUE' in fact_check.verdict.upper()) %}
+      <div id="result-ml" class="mb-5">
         {% if is_fake %}
-        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 sm:p-5 flex items-start gap-3">
           <div class="w-8 h-8 bg-red-100 text-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">ML Model Verdict</p>
-            <p class="text-sm sm:text-base font-bold text-gray-900 mt-0.5">{{ prediction_text }}</p>
-            <p class="text-xs text-gray-400 font-light mt-1">Matches training data for unreliable reporting.</p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">ML Model Verdict</p>
+            <p class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mt-0.5"><span id="ml-exp">{{ prediction_text }}</span></p>
+            <button onclick="voiceRead('ml-exp', this)" class="mt-2 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
+            <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1">Matches training data for unreliable reporting.</p>
           </div>
         </div>
         {% else %}
-        <div class="border border-gray-200 bg-gray-50 rounded-xl p-4 sm:p-5 flex items-start gap-3">
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 sm:p-5 flex items-start gap-3">
           <div class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">ML Model Verdict</p>
-            <p class="text-sm sm:text-base font-bold text-gray-900 mt-0.5">{{ prediction_text }}</p>
-            <p class="text-xs text-gray-400 font-light mt-1">Matches training data for verified reporting.</p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">ML Model Verdict</p>
+            <p class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mt-0.5"><span id="ml-exp">{{ prediction_text }}</span></p>
+            <button onclick="voiceRead('ml-exp', this)" class="mt-2 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
+            <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1">Matches training data for verified reporting.</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endif %}
+
+      
+      <!-- SMS RESULT -->
+      {% if sms_result %}
+      <div id="result-sms" class="mb-5">
+        {% if sms_result.success %}
+          {% if sms_result.verdict == 'Scam' %}
+          <div class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 p-1.5 rounded-md flex-shrink-0">
+                ❌
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Scam Detection Verdict</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-red-600 dark:text-red-400">Scam</span></p>
+            <p class="text-xs text-gray-500 dark:text-slate-400 font-semibold mt-1">Platform / Sender: <span class="text-gray-700 dark:text-slate-300 font-normal">{{ sms_result.platform }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-2 leading-relaxed"><span id="sms-exp">{{ sms_result.explanation }}</span></p>
+            <button onclick="voiceRead('sms-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
+            
+            <div class="mt-4 pt-3 border-t border-red-100 dark:border-red-900/30">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Score</p>
+              <div class="space-y-2">
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Scam Probability</span>
+                    <span>{{ sms_result.scam_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-red-600 h-1.5 rounded-full" style="width: {{ sms_result.scam_probability }}%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Safe Probability</span>
+                    <span>{{ sms_result.safe_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ sms_result.safe_probability }}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% elif sms_result.verdict == 'Suspicious' %}
+          <div class="border border-yellow-200 dark:border-yellow-900/50 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 p-1.5 rounded-md flex-shrink-0">
+                ⚠️
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Scam Detection Verdict</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-yellow-700 dark:text-yellow-400">Suspicious</span></p>
+            <p class="text-xs text-gray-500 dark:text-slate-400 font-semibold mt-1">Platform / Sender: <span class="text-gray-700 dark:text-slate-300 font-normal">{{ sms_result.platform }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-2 leading-relaxed"><span id="sms-exp">{{ sms_result.explanation }}</span></p>
+            <button onclick="voiceRead('sms-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
+            
+            <div class="mt-4 pt-3 border-t border-yellow-100 dark:border-yellow-900/30">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Score</p>
+              <div class="space-y-2">
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Scam Probability</span>
+                    <span>{{ sms_result.scam_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-yellow-500 h-1.5 rounded-full" style="width: {{ sms_result.scam_probability }}%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Safe Probability</span>
+                    <span>{{ sms_result.safe_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ sms_result.safe_probability }}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 p-1.5 rounded-md flex-shrink-0">
+                ✅
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Scam Detection Verdict</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-green-700 dark:text-green-400">Safe</span></p>
+            <p class="text-xs text-gray-500 dark:text-slate-400 font-semibold mt-1">Platform / Sender: <span class="text-gray-700 dark:text-slate-300 font-normal">{{ sms_result.platform }}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-2 leading-relaxed"><span id="sms-exp">{{ sms_result.explanation }}</span></p>
+            <button onclick="voiceRead('sms-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
+            
+            <div class="mt-4 pt-3 border-t border-green-100 dark:border-green-900/30">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Score</p>
+              <div class="space-y-2">
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Scam Probability</span>
+                    <span>{{ sms_result.scam_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-red-500 h-1.5 rounded-full" style="width: {{ sms_result.scam_probability }}%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Safe Probability</span>
+                    <span>{{ sms_result.safe_probability }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="bg-green-600 h-1.5 rounded-full" style="width: {{ sms_result.safe_probability }}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        {% else %}
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <span class="text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">Scam Check Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ sms_result.error }}</p>
           </div>
         </div>
         {% endif %}
       </div>
       {% endif %}
 
+      <!-- URL RESULT -->
+      {% if url_result %}
+      <div id="result-url" class="mb-5">
+        {% if url_result.success %}
+          {% if url_result.status == 'Malicious' %}
+          <div class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">URL Safety Status</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Status: <span class="text-red-600 dark:text-red-400">🔴 Malicious</span></p>
+          {% elif url_result.status == 'Suspicious' %}
+          <div class="border border-yellow-200 dark:border-yellow-900/50 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse"></span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">URL Safety Status</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Status: <span class="text-yellow-700 dark:text-yellow-400">🟡 Suspicious</span></p>
+          {% else %}
+          <div class="border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">URL Safety Status</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Status: <span class="text-green-700 dark:text-green-400">🟢 Safe</span></p>
+          {% endif %}
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-2 leading-relaxed">{{ url_result.explanation }}</p>
+            
+            <!-- Safety Score -->
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Safety Score</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">{{ url_result.safety_score }} <span class="text-xs font-light text-gray-400">/ 100</span></span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-2">
+                  <div class="h-2 rounded-full {% if url_result.safety_score >= 80 %}bg-green-500{% elif url_result.safety_score >= 50 %}bg-yellow-500{% else %}bg-red-500{% endif %}" style="width: {{ url_result.safety_score }}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Domain Info -->
+            {% if domain_info %}
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">🌍 Domain Information</p>
+              <div class="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs font-light text-gray-500 dark:text-slate-400">
+                <div>
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Domain Name</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">{{ domain_info.domain }}</span>
+                </div>
+                <div>
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Website Title</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">{{ domain_info.title }}</span>
+                </div>
+                <div>
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">HTTPS</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">{{ domain_info.https }}</span>
+                </div>
+                <div>
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">IP Address</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">{{ domain_info.ip }}</span>
+                </div>
+                <div>
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Country</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">{{ domain_info.country }}</span>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        {% else %}
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <span class="text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">URL Check Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ url_result.error }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- CATEGORY RESULT -->
+      {% if category_result %}
+      <div id="result-category" class="mb-5">
+        {% if category_result.success %}
+        <div class="border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl p-4 sm:p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-1.5 rounded-md flex-shrink-0">
+              🏷️
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-indigo-500">News Category Detector</span>
+          </div>
+          <p class="text-sm font-bold text-gray-900 dark:text-white">Detected Category: <span class="text-indigo-600 dark:text-indigo-400">{{ category_result.category }}</span></p>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">{{ category_result.summary }}</p>
+          
+          <div class="mt-4 pt-3 border-t border-indigo-100 dark:border-indigo-900/30">
+            <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Level</p>
+            <div class="flex items-center gap-5">
+              <span class="text-2xl font-black text-gray-900 dark:text-white">{{ category_result.confidence }}%</span>
+              <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                <div class="bg-indigo-600 h-1.5 rounded-full" style="width: {{ category_result.confidence }}%"></div>
+              </div>
+            </div>
+          </div>
+          
+          {% if category_result.keywords %}
+          <div class="mt-4 pt-3 border-t border-indigo-100 dark:border-indigo-900/30">
+            <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Key Topics</p>
+            <div class="flex flex-wrap gap-1.5">
+              {% for kw in category_result.keywords %}
+              <span class="text-xs bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">{{ kw }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <span class="text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">Categorization Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ category_result.error }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- AD SCAM RESULT -->
+      {% if ad_scam_result %}
+      <div id="result-ad-scam" class="mb-5">
+        {% if ad_scam_result.success %}
+          {% if ad_scam_result.verdict == 'Scam' %}
+          <div class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 p-1.5 rounded-md flex-shrink-0">
+                📢
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Ad Scam analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-red-600 dark:text-red-400">🔴 Scam / Fraudulent Ad</span></p>
+          {% elif ad_scam_result.verdict == 'Suspicious' %}
+          <div class="border border-yellow-200 dark:border-yellow-900/50 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 p-1.5 rounded-md flex-shrink-0">
+                📢
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Ad Scam analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-yellow-700 dark:text-yellow-400">🟡 Suspicious Ad Claims</span></p>
+          {% else %}
+          <div class="border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 p-1.5 rounded-md flex-shrink-0">
+                📢
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Ad Scam analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-green-700 dark:text-green-400">🟢 Safe Advertisement</span></p>
+          {% endif %}
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">{{ ad_scam_result.explanation }}</p>
+            
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Scam Probability</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">{{ ad_scam_result.scam_probability }}%</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full {% if ad_scam_result.scam_probability >= 70 %}bg-red-500{% elif ad_scam_result.scam_probability >= 30 %}bg-yellow-500{% else %}bg-green-500{% endif %}" style="width: {{ ad_scam_result.scam_probability }}%"></div>
+                </div>
+              </div>
+            </div>
+
+            {% if ad_scam_result.risk_flags %}
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Warning Signs</p>
+              <div class="flex flex-wrap gap-1.5">
+                {% for flag in ad_scam_result.risk_flags %}
+                <span class="text-xs bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300 border border-red-100 dark:border-red-900/30 px-2.5 py-1 rounded-lg">⚠️ {{ flag }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        {% else %}
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <span class="text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">Ad Analysis Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ ad_scam_result.error }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- SHOP SCAM RESULT -->
+      {% if shop_scam_result %}
+      <div id="result-shop-scam" class="mb-5">
+        {% if shop_scam_result.success %}
+          {% if shop_scam_result.verdict == 'Scam' %}
+          <div class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 p-1.5 rounded-md flex-shrink-0">
+                🛒
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Shopping Offer analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-red-600 dark:text-red-400">🔴 Scam / Fake Offer</span></p>
+          {% elif shop_scam_result.verdict == 'Suspicious' %}
+          <div class="border border-yellow-200 dark:border-yellow-900/50 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 p-1.5 rounded-md flex-shrink-0">
+                🛒
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Shopping Offer analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-yellow-700 dark:text-yellow-400">🟡 Suspicious Deal</span></p>
+          {% else %}
+          <div class="border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 p-1.5 rounded-md flex-shrink-0">
+                🛒
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Shopping Offer analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-green-700 dark:text-green-400">🟢 Safe Shopping Deal</span></p>
+          {% endif %}
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">{{ shop_scam_result.explanation }}</p>
+            
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Scam Probability</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">{{ shop_scam_result.scam_probability }}%</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full {% if shop_scam_result.scam_probability >= 70 %}bg-red-500{% elif shop_scam_result.scam_probability >= 30 %}bg-yellow-500{% else %}bg-green-500{% endif %}" style="width: {{ shop_scam_result.scam_probability }}%"></div>
+                </div>
+              </div>
+            </div>
+
+            {% if shop_scam_result.risk_flags %}
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Warning Signs</p>
+              <div class="flex flex-wrap gap-1.5">
+                {% for flag in shop_scam_result.risk_flags %}
+                <span class="text-xs bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300 border border-red-100 dark:border-red-900/30 px-2.5 py-1 rounded-lg">⚠️ {{ flag }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        {% else %}
+        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
+          <span class="text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0">⚠️</span>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">Analysis Failed</p>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ shop_scam_result.error }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- HISTORY RESULT VIEW -->
+      <div id="result-history-view" class="mb-5 hidden"></div>
+
       <!-- FORM CARD -->
-      <div class="border border-gray-200 rounded-xl p-4 sm:p-6 bg-white">
-        <!-- Tabs — 2x2 grid on mobile -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 bg-gray-100 p-1 rounded-lg gap-1 mb-5 text-xs font-semibold">
-          <button type="button" id="tab-headline" onclick="setMode('headline')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Headline</button>
-          <button type="button" id="tab-article" onclick="setMode('article')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Full Article</button>
-          <button type="button" id="tab-auto" onclick="setMode('auto')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Auto-Detect</button>
-          <button type="button" id="tab-image" onclick="setMode('image')" class="py-2.5 rounded-md text-center transition-all cursor-pointer">Image</button>
+      <div class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 sm:p-6 bg-white dark:bg-slate-900">
+        <!-- Tabs — grid layout -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 bg-gray-100 dark:bg-slate-700 p-1 rounded-lg gap-1 mb-5 text-xs font-semibold text-center">
+          <button type="button" id="tab-headline" onclick="setMode('headline', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Headline</button>
+          <button type="button" id="tab-article" onclick="setMode('article', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Full Article</button>
+          <button type="button" id="tab-auto" onclick="setMode('auto', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Auto-Detect</button>
+          <button type="button" id="tab-image" onclick="setMode('image', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Image</button>
+          <button type="button" id="tab-sms" onclick="setMode('sms', true)" class="py-2.5 rounded-md transition-all cursor-pointer">SMS Checker</button>
+          <button type="button" id="tab-url" onclick="setMode('url', true)" class="py-2.5 rounded-md transition-all cursor-pointer">URL Checker</button>
+          
+          <button type="button" id="tab-category" onclick="setMode('category', true)" class="py-2.5 rounded-md transition-all cursor-pointer">News Category</button>
+          <button type="button" id="tab-ad_scam" onclick="setMode('ad_scam', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Ad Scam Checker</button>
+          <button type="button" id="tab-shop_scam" onclick="setMode('shop_scam', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Online Shopping</button>
         </div>
 
         <form action="/predict" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -193,38 +681,79 @@
 
           <!-- Text -->
           <div id="text-input-container">
-            <label for="news" id="input-label" class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wider">Enter News Headline</label>
-            <textarea name="news" id="news" rows="5" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 sm:px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition-all font-light resize-none" placeholder="Type or paste text here...">{{ input_text or '' }}</textarea>
-            <p id="input-help" class="text-xs text-gray-400 font-light mt-1.5">Short-sentence feature vector analysis.</p>
+            <div class="flex items-center justify-between mb-2">
+              <label for="news" id="input-label" class="block text-xs font-bold text-gray-700 dark:text-slate-200 uppercase tracking-wider">Enter News Headline</label>
+              <span id="mode-badge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full transition-all duration-300"></span>
+            </div>
+            <textarea name="news" id="news" rows="9" required class="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg px-3 sm:px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition-all font-light resize-none" placeholder="Type or paste text here...">{{ input_text or '' }}</textarea>
+            <p id="input-help" class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1.5">Short-sentence feature vector analysis.</p>
           </div>
 
           <!-- Image -->
           <div id="image-input-container" class="hidden">
-            <label class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wider">Upload News Image</label>
-            <div class="border-2 border-dashed border-gray-200 rounded-lg p-8 sm:p-10 text-center bg-gray-50 hover:border-gray-400 transition-all cursor-pointer flex flex-col items-center" onclick="document.getElementById('news_image').click();">
+            <label class="block text-xs font-semibold text-gray-700 dark:text-slate-200 mb-1.5 uppercase tracking-wider">Upload News Image</label>
+            <div class="border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-lg p-8 sm:p-10 text-center bg-gray-50 dark:bg-slate-800 hover:border-gray-400 transition-all cursor-pointer flex flex-col items-center" onclick="document.getElementById('news_image').click();">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-300 mb-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" />
               </svg>
-              <span id="file-name" class="text-sm text-gray-400 font-light">Tap to upload image</span>
+              <span id="file-name" class="text-sm text-gray-400 dark:text-slate-500 font-light">Tap to upload image</span>
               <span class="text-xs text-gray-300 mt-1">PNG, JPG, JPEG, WEBP</span>
               <input type="file" id="news_image" name="news_image" accept="image/*" class="hidden" onchange="showFileName(this)">
             </div>
-            <p class="text-xs text-gray-400 font-light mt-1.5">Gemini analyzes visual and text content inside the image.</p>
+            <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1.5">Gemini analyzes visual and text content inside the image.</p>
           </div>
 
           <!-- Submit -->
-          <button type="submit" class="w-full bg-gray-900 hover:bg-gray-700 active:scale-[0.98] text-white text-sm font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
-            Verify Content
+          <button type="submit" id="submit-btn" class="w-full bg-gray-900 dark:bg-indigo-600 hover:bg-gray-700 dark:hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
+            <span id="submit-btn-text">Verify Content</span>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196 7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </button>
         </form>
       </div>
+
+      <!-- HISTORY CONTAINER -->
+      <div id="history-container" class="mt-8 border-t border-gray-200 dark:border-slate-700 pt-6 hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-400 dark:text-slate-400">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 id="history-title" class="text-xs font-bold text-gray-700 dark:text-slate-200 uppercase tracking-widest">Recent Headline History</h2>
+          </div>
+          <button id="clear-history-btn" onclick="clearHistory()" class="flex items-center gap-1.5 text-[11px] font-semibold text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border border-red-200 dark:border-red-800/50 px-2.5 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-all active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>
+            Clear History
+          </button>
+        </div>
+        
+        <div id="history-list" class="space-y-3">
+          <!-- Dynamically loaded history items go here -->
+        </div>
+      </div>
     </main>
 
-    <footer class="border-t border-gray-100 py-6 text-center text-xs text-gray-400 font-light">
-      <p>&copy; 2026 TruthShield. All rights reserved.</p>
+    <footer class="border-t border-gray-100 dark:border-slate-800 py-8 px-4">
+      <div class="max-w-5xl mx-auto flex flex-col items-center gap-5">
+        <div class="flex items-center gap-5">
+          <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-lg hover:shadow-pink-100 dark:hover:shadow-pink-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-pink-500 transition-colors duration-300"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors duration-300"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com" target="_blank" aria-label="GitHub" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-gray-700 dark:hover:border-gray-400 hover:shadow-lg hover:shadow-gray-200 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://wa.me/" target="_blank" aria-label="WhatsApp" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg hover:shadow-green-100 dark:hover:shadow-green-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-green-500 transition-colors duration-300"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-slate-500 font-light">&copy; 2026 TruthShield. All rights reserved.</p>
+      </div>
     </footer>
 
     <script>
@@ -241,33 +770,135 @@
         const label = document.getElementById('file-name');
         if (input.files && input.files[0]) {
           label.innerText = input.files[0].name;
-          label.classList.add('font-medium', 'text-gray-700');
+          label.classList.add('font-medium', 'text-gray-700 dark:text-slate-200');
         } else {
           label.innerText = 'Tap to upload image';
-          label.classList.remove('font-medium', 'text-gray-700');
+          label.classList.remove('font-medium', 'text-gray-700 dark:text-slate-200');
         }
       }
 
-      function setMode(mode) {
+      function setMode(mode, isUserClick = false) {
         document.getElementById('predict_type').value = mode;
-        const tabs = ['headline', 'article', 'auto', 'image'];
+        const tabs = ['headline', 'article', 'auto', 'image', 'sms', 'url', 'category', 'ad_scam', 'shop_scam', 'phone'];
+        
+        const modeStyles = {
+          phone: {
+            tabClass: 'bg-orange-500 text-white shadow-sm font-bold',
+            btnClass: 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-300',
+            badgeText: 'Phone Risk Checker',
+            badgeColor: 'bg-orange-100 text-orange-800 dark:bg-orange-950/40 dark:text-orange-300'
+          },
+
+          headline: {
+            tabClass: 'bg-slate-900 text-white dark:bg-slate-800 shadow-sm font-bold',
+            btnClass: 'bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 focus:ring-slate-300',
+            badgeText: 'News Vector Classifier',
+            badgeColor: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
+          },
+          article: {
+            tabClass: 'bg-indigo-600 text-white shadow-sm font-bold',
+            btnClass: 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-300',
+            badgeText: 'Deep Semantic Analyzer',
+            badgeColor: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300'
+          },
+          auto: {
+            tabClass: 'bg-purple-600 text-white shadow-sm font-bold',
+            btnClass: 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-300',
+            badgeText: 'Smart Length Matcher',
+            badgeColor: 'bg-purple-100 text-purple-800 dark:bg-purple-950/40 dark:text-purple-300'
+          },
+          image: {
+            tabClass: 'bg-cyan-600 text-white shadow-sm font-bold',
+            btnClass: 'bg-cyan-600 hover:bg-cyan-700 focus:ring-cyan-300',
+            badgeText: 'Visual Multi-Modal Guard',
+            badgeColor: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300'
+          },
+          sms: {
+            tabClass: 'bg-amber-500 text-white shadow-sm font-bold',
+            btnClass: 'bg-amber-500 hover:bg-amber-600 focus:ring-amber-300',
+            badgeText: 'Carrier SMS Scanner',
+            badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300'
+          },
+          url: {
+            tabClass: 'bg-teal-600 text-white shadow-sm font-bold',
+            btnClass: 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-300',
+            badgeText: 'SSL & DNS Security Inspector',
+            badgeColor: 'bg-teal-100 text-teal-800 dark:bg-teal-950/40 dark:text-teal-300'
+          },
+          category: {
+            tabClass: 'bg-violet-500 text-white shadow-sm font-bold',
+            btnClass: 'bg-violet-500 hover:bg-violet-600 focus:ring-violet-300',
+            badgeText: 'Multi-Topic Classifier',
+            badgeColor: 'bg-violet-100 text-violet-800 dark:bg-violet-950/40 dark:text-violet-300'
+          },
+          ad_scam: {
+            tabClass: 'bg-rose-500 text-white shadow-sm font-bold',
+            btnClass: 'bg-rose-500 hover:bg-rose-600 focus:ring-rose-300',
+            badgeText: 'Sponsor Fraud Detector',
+            badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300'
+          },
+          shop_scam: {
+            tabClass: 'bg-emerald-600 text-white shadow-sm font-bold',
+            btnClass: 'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-300',
+            badgeText: 'E-commerce Scam Guard',
+            badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+          }
+        };
+
+        const config = modeStyles[mode] || modeStyles.headline;
+
         tabs.forEach(t => {
           const btn = document.getElementById(`tab-${t}`);
-          if (btn) btn.className = 'py-2.5 rounded-md text-center transition-all cursor-pointer text-gray-500 hover:text-gray-800';
+          if (btn) btn.className = 'py-2.5 rounded-md transition-all cursor-pointer text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100';
         });
+        
         const active = document.getElementById(`tab-${mode}`);
-        if (active) active.className = 'py-2.5 rounded-md text-center transition-all cursor-pointer bg-white text-gray-900 shadow-sm font-bold';
+        if (active) active.className = 'py-2.5 rounded-md transition-all cursor-pointer shadow-sm ' + config.tabClass;
+
+        if (isUserClick) {
+          const resultIds = ['result-fact-check', 'result-ml', 'result-sms', 'result-url', 'result-category', 'result-ad-scam', 'result-shop-scam', 'result-history-view'];
+          resultIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+          });
+          
+          // Clear inputs
+          const textarea = document.getElementById('news');
+          if (textarea) textarea.value = '';
+          
+          const imgInput = document.getElementById('news_image');
+          if (imgInput) imgInput.value = '';
+          
+          const fileNameLabel = document.getElementById('file-name');
+          if (fileNameLabel) {
+            fileNameLabel.innerText = 'Tap to upload image';
+            fileNameLabel.classList.remove('font-medium', 'text-gray-700', 'dark:text-slate-200');
+          }
+        }
 
         const label = document.getElementById('input-label');
         const textarea = document.getElementById('news');
         const help = document.getElementById('input-help');
         const textBox = document.getElementById('text-input-container');
         const imgBox = document.getElementById('image-input-container');
+        const submitBtn = document.getElementById('submit-btn');
+        const submitBtnText = document.getElementById('submit-btn-text');
+        const modeBadge = document.getElementById('mode-badge');
+
+        if (submitBtn) {
+          submitBtn.className = 'w-full active:scale-[0.98] text-white text-sm font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 ' + config.btnClass;
+        }
+
+        if (modeBadge) {
+          modeBadge.innerText = config.badgeText;
+          modeBadge.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full transition-all duration-300 ' + config.badgeColor;
+        }
 
         if (mode === 'image') {
           textBox.classList.add('hidden');
           imgBox.classList.remove('hidden');
           textarea.removeAttribute('required');
+          if (submitBtnText) submitBtnText.innerText = 'Verify Media Image';
         } else {
           textBox.classList.remove('hidden');
           imgBox.classList.add('hidden');
@@ -276,18 +907,582 @@
             label.innerText = 'Enter News Headline';
             textarea.placeholder = 'Enter the title or short headline...';
             help.innerText = 'Short-sentence feature vector analysis.';
+            if (submitBtnText) submitBtnText.innerText = 'Verify Headline';
           } else if (mode === 'article') {
             label.innerText = 'Enter Full Article Text';
             textarea.placeholder = 'Paste the full article body here...';
             help.innerText = 'Deep word relationship and context analysis.';
+            if (submitBtnText) submitBtnText.innerText = 'Verify Full Article';
+          } else if (mode === 'sms') {
+            label.innerText = 'Copy-Paste SMS';
+            textarea.placeholder = 'Paste your SMS message here to scan for scams...';
+            help.innerText = 'AI-powered scam detection and probability analysis.';
+            if (submitBtnText) submitBtnText.innerText = 'Analyze SMS Message';
+          } else if (mode === 'url') {
+            label.innerText = 'URL Input';
+            textarea.placeholder = 'Paste URL here (e.g., https://example.com)...';
+            help.innerText = 'AI-powered security risk, reputation, and SSL verification.';
+            if (submitBtnText) submitBtnText.innerText = 'Analyze URL Link';
+          } else if (mode === 'category') {
+            label.innerText = 'Enter News Headline or Content';
+            textarea.placeholder = 'Paste news text here to auto-categorize...';
+            help.innerText = 'AI categorizes news into Politics, Business, Sports, Technology, Health, etc.';
+            if (submitBtnText) submitBtnText.innerText = 'Detect News Category';
+          } else if (mode === 'ad_scam') {
+            label.innerText = 'Enter Advertisement Text';
+            textarea.placeholder = 'Paste advertisement copy, promo text, or offer here...';
+            help.innerText = 'AI scans for deceptive practices, bait-and-switch, or financial fraud.';
+            if (submitBtnText) submitBtnText.innerText = 'Check Advertisement Scam';
+          } else if (mode === 'shop_scam') {
+            label.innerText = 'Enter Shopping Offer / Deal';
+            textarea.placeholder = 'Paste online shopping deal, product copy, or store text...';
+            help.innerText = 'AI scans for counterfeit goods, fake shops, or payment scams.';
+            if (submitBtnText) submitBtnText.innerText = 'Verify Online Shopping Deal';
           } else {
             label.innerText = 'Enter News Content';
             textarea.placeholder = 'Paste headline or full article here...';
             help.innerText = 'Auto-selects optimal model based on length.';
+            if (submitBtnText) submitBtnText.innerText = 'Auto-Detect Authenticity';
           }
         }
+        
+        // Load history matching this mode
+        loadHistory(mode);
       }
+      
+      let currentHistory = [];
+
+      async function loadHistory(mode) {
+        const historyContainer = document.getElementById('history-container');
+        const historyList = document.getElementById('history-list');
+        const historyTitle = document.getElementById('history-title');
+        
+        if (!historyContainer || !historyList) return;
+        
+        // Mode mapping for headings
+        const modeNames = {
+          headline: 'Headline',
+          article: 'Full Article',
+          auto: 'Auto-Detect',
+          image: 'Image',
+          sms: 'SMS',
+          url: 'URL',
+          category: 'News Category',
+          ad_scam: 'Ad Scam',
+          shop_scam: 'Online Shopping'
+        };
+        
+        const friendlyName = modeNames[mode] || 'Verification';
+        if (historyTitle) {
+          historyTitle.innerText = `Recent ${friendlyName} History`;
+        }
+
+        try {
+          const response = await fetch('/api/history');
+          const data = await response.json();
+          
+          if (data.success && data.history) {
+            currentHistory = data.history;
+            // Filter by active mode
+            const filtered = data.history.filter(item => item.predict_type === mode);
+            
+            if (filtered.length > 0) {
+              historyContainer.classList.remove('hidden');
+              historyList.innerHTML = '';
+              
+              filtered.forEach(item => {
+                const date = new Date(item.timestamp);
+                const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + date.toLocaleDateString();
+                
+                // Get a short snippet of the input text
+                let snippet = item.input_text || 'Media File';
+                if (snippet.length > 80) {
+                  snippet = snippet.substring(0, 80) + '...';
+                }
+                
+                // Build status indicator depending on the results
+                let statusHtml = '';
+                if (mode === 'headline' || mode === 'article' || mode === 'auto') {
+                  const factCheck = item.results.fact_check;
+                  const isFake = item.results.is_fake;
+                  
+                  if (factCheck && factCheck.success && factCheck.verdict) {
+                    // Use Gemini Live Fact Check verdict if available
+                    const verd = factCheck.verdict.toUpperCase();
+                    if (verd.includes('TRUE')) {
+                      statusHtml = `<span class="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 dark:text-green-400 px-2 py-0.5 rounded border border-green-200/50">True</span>`;
+                    } else if (verd.includes('FALSE')) {
+                      statusHtml = `<span class="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded border border-red-200/50">False</span>`;
+                    } else {
+                      statusHtml = `<span class="text-[10px] font-bold text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 dark:text-yellow-400 px-2 py-0.5 rounded border border-yellow-200/50">Unverified</span>`;
+                    }
+                  } else {
+                    // Fall back to ML model result
+                    statusHtml = isFake 
+                      ? `<span class="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded border border-red-200/50">Fake</span>`
+                      : `<span class="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 dark:text-green-400 px-2 py-0.5 rounded border border-green-200/50">Real</span>`;
+                  }
+                } else if (mode === 'sms') {
+                  const verdict = item.results.sms_result?.verdict || 'Processed';
+                  const isScam = verdict.toLowerCase().includes('scam') || verdict.toLowerCase().includes('malicious') || verdict.toLowerCase().includes('suspicious');
+                  statusHtml = isScam
+                    ? `<span class="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/20 dark:text-amber-400 px-2 py-0.5 rounded border border-amber-200/50">${verdict}</span>`
+                    : `<span class="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 dark:text-green-400 px-2 py-0.5 rounded border border-green-200/50">${verdict}</span>`;
+                } else if (mode === 'url') {
+                  const status = item.results.url_result?.status || 'Safe';
+                  statusHtml = status === 'Safe'
+                    ? `<span class="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 dark:text-green-400 px-2 py-0.5 rounded border border-green-200/50">Safe</span>`
+                    : (status === 'Suspicious'
+                      ? `<span class="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/20 dark:text-amber-400 px-2 py-0.5 rounded border border-amber-200/50">Suspicious</span>`
+                      : `<span class="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded border border-red-200/50">Malicious</span>`);
+                } else if (mode === 'category') {
+                  const cat = item.results.category_result?.category || 'News';
+                  statusHtml = `<span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 dark:text-indigo-400 px-2 py-0.5 rounded border border-indigo-200/50">${cat}</span>`;
+                } else if (mode === 'ad_scam' || mode === 'shop_scam') {
+                  const res = item.results.ad_scam_result || item.results.shop_scam_result;
+                  const verd = res?.verdict || 'Processed';
+                  statusHtml = verd === 'Scam'
+                    ? `<span class="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded border border-red-200/50">Scam</span>`
+                    : (verd === 'Suspicious'
+                      ? `<span class="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/20 dark:text-amber-400 px-2 py-0.5 rounded border border-amber-200/50">Suspicious</span>`
+                      : `<span class="text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-950/20 dark:text-green-400 px-2 py-0.5 rounded border border-green-200/50">Safe</span>`);
+                } else if (mode === 'image') {
+                  const rating = item.results.fact_check?.verdict || 'Analyzed';
+                  statusHtml = `<span class="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-950/20 dark:text-cyan-400 px-2 py-0.5 rounded border border-cyan-200/50">${rating}</span>`;
+                }
+
+                const itemCard = document.createElement('div');
+                itemCard.className = 'flex items-center justify-between p-3.5 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800/80 border border-gray-100 dark:border-slate-800 rounded-xl cursor-pointer active:scale-[0.99] transition-all';
+                itemCard.setAttribute('onclick', `showHistoryResult('${item.id}')`);
+                itemCard.innerHTML = `
+                  <div class="flex-grow min-w-0 pr-4">
+                    <p class="text-sm font-medium text-gray-800 dark:text-slate-200 truncate font-light">${escapeHtml(snippet)}</p>
+                    <span class="text-[10px] text-gray-400 dark:text-slate-500 font-light mt-0.5 block">${timeString}</span>
+                  </div>
+                  <div class="flex-shrink-0">
+                    ${statusHtml}
+                  </div>
+                `;
+                historyList.appendChild(itemCard);
+              });
+            } else {
+              historyContainer.classList.add('hidden');
+            }
+          }
+        } catch (e) {
+          console.error("Error loading history:", e);
+        }
+      }
+
+      function showHistoryResult(itemId) {
+        const item = currentHistory.find(x => x.id === itemId);
+        if (!item) return;
+        
+        // Hide all native result elements
+        const resultIds = ['result-fact-check', 'result-ml', 'result-sms', 'result-url', 'result-category', 'result-ad-scam', 'result-shop-scam'];
+        resultIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('hidden');
+        });
+        
+        // Populate inputs back
+        const mode = item.predict_type;
+        const textarea = document.getElementById('news');
+        if (textarea && mode !== 'image') {
+          textarea.value = item.input_text || '';
+        }
+        
+        const historyResultDiv = document.getElementById('result-history-view');
+        if (!historyResultDiv) return;
+        
+        historyResultDiv.innerHTML = '';
+        historyResultDiv.classList.remove('hidden');
+        
+        let html = '';
+        if (mode === 'headline' || mode === 'article' || mode === 'auto') {
+          html = renderMlResult(item.results);
+        } else if (mode === 'sms') {
+          html = renderSmsResult(item.results);
+        } else if (mode === 'url') {
+          html = renderUrlResult(item.results);
+        } else if (mode === 'category') {
+          html = renderCategoryResult(item.results);
+        } else if (mode === 'ad_scam') {
+          html = renderAdScamResult(item.results);
+        } else if (mode === 'shop_scam') {
+          html = renderShopScamResult(item.results);
+        } else if (mode === 'image') {
+          html = renderImageResult(item.results, item.input_text);
+        }
+        
+        historyResultDiv.innerHTML = html;
+        
+        // Scroll smoothly to results
+        historyResultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function renderMlResult(results) {
+        const isFake = results.is_fake;
+        const predText = results.prediction_text;
+        const fact = results.fact_check;
+        
+        let html = '';
+        if (isFake) {
+          html += `
+            <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 sm:p-5 flex items-start gap-3 mb-4">
+              <div class="w-8 h-8 bg-red-100 dark:bg-red-950 text-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">🚨</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">ML Model Verdict</p>
+                <p class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mt-0.5">${predText}</p>
+                <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1">Matches training data for unreliable reporting.</p>
+              </div>
+            </div>`;
+        } else {
+          html += `
+            <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 sm:p-5 flex items-start gap-3 mb-4">
+              <div class="w-8 h-8 bg-green-100 dark:bg-green-950 text-green-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">✓</div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">ML Model Verdict</p>
+                <p class="text-sm sm:text-base font-bold text-gray-900 dark:text-white mt-0.5">${predText}</p>
+                <p class="text-xs text-gray-400 dark:text-slate-500 font-light mt-1">Matches training data for verified reporting.</p>
+              </div>
+            </div>`;
+        }
+        
+        if (fact && fact.success) {
+          const verd = fact.verdict;
+          const expl = fact.explanation;
+          const isFactFake = verd.toUpperCase().includes('FALSE');
+          const isFactTrue = verd.toUpperCase().includes('TRUE');
+          
+          let border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700';
+          let iconBg = 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300';
+          let verdColor = 'text-yellow-700 dark:text-yellow-400';
+          if (isFactFake) {
+            border = 'border-red-200 bg-red-50 dark:bg-red-950/20 text-red-700';
+            iconBg = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300';
+            verdColor = 'text-red-700 dark:text-red-400';
+          } else if (isFactTrue) {
+            border = 'border-green-200 bg-green-50 dark:bg-green-950/20 text-green-700';
+            iconBg = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300';
+            verdColor = 'text-green-700 dark:text-green-400';
+          }
+          
+          html += `
+            <div class="border ${border} rounded-xl p-4 sm:p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="${iconBg} p-1.5 rounded-md flex-shrink-0">🔍</span>
+                <span class="text-xs font-semibold uppercase tracking-widest">Live Fact Check</span>
+              </div>
+              <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="${verdColor}">${verd}</span></p>
+              <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${expl}</p>
+            </div>`;
+        }
+        return html;
+      }
+
+      function renderSmsResult(results) {
+        const res = results.sms_result;
+        if (!res) return '';
+        let border = 'border-green-200 bg-green-50 dark:bg-green-950/20';
+        let icon = '✅';
+        let color = 'text-green-700 dark:text-green-400';
+        let progress = 'bg-green-500';
+        if (res.verdict === 'Scam') {
+          border = 'border-red-200 bg-red-50 dark:bg-red-950/20';
+          icon = '❌';
+          color = 'text-red-600 dark:text-red-400';
+          progress = 'bg-red-600';
+        } else if (res.verdict === 'Suspicious') {
+          border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20';
+          icon = '⚠️';
+          color = 'text-yellow-700 dark:text-yellow-400';
+          progress = 'bg-yellow-500';
+        }
+        return `
+          <div class="border ${border} rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="p-1.5 rounded-md flex-shrink-0">${icon}</span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Scam Detection Verdict</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="${color}">${res.verdict}</span></p>
+            <p class="text-xs text-gray-500 dark:text-slate-400 font-semibold mt-1">Platform / Sender: <span class="text-gray-700 dark:text-slate-300 font-normal">${res.platform}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-2 leading-relaxed">${res.explanation}</p>
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Score</p>
+              <div class="space-y-2">
+                <div>
+                  <div class="flex justify-between text-xs text-gray-600 dark:text-slate-300 mb-1">
+                    <span>Scam Probability</span>
+                    <span>${res.scam_probability}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                    <div class="${progress} h-1.5 rounded-full" style="width: ${res.scam_probability}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderUrlResult(results) {
+        const res = results.url_result;
+        const dom = results.domain_info;
+        if (!res) return '';
+        let border = 'border-green-200 bg-green-50 dark:bg-green-950/20';
+        let icon = '🟢';
+        let color = 'text-green-600 dark:text-green-400';
+        if (res.status === 'Malicious') {
+          border = 'border-red-200 bg-red-50 dark:bg-red-950/20';
+          icon = '🔴';
+          color = 'text-red-600 dark:text-red-400';
+        } else if (res.status === 'Suspicious') {
+          border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20';
+          icon = '🟡';
+          color = 'text-yellow-600 dark:text-yellow-400';
+        }
+        
+        let domHtml = '';
+        if (dom) {
+          domHtml = `
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">Domain Information</p>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 p-2.5 rounded-lg">
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Domain Name</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">${dom.domain || 'N/A'}</span>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 p-2.5 rounded-lg">
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">HTTPS Status</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">${dom.https ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 p-2.5 rounded-lg">
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">IP Address</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">${dom.ip || 'N/A'}</span>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 p-2.5 rounded-lg">
+                  <span class="block font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Country</span>
+                  <span class="text-gray-900 dark:text-white font-medium text-sm">${dom.country || 'N/A'}</span>
+                </div>
+              </div>
+            </div>`;
+        }
+        return `
+          <div class="border ${border} rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-widest">URL Safety Scan</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Status: <span class="${color}">${icon} ${res.status}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1.5 leading-relaxed">${res.explanation}</p>
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Safety Score</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">${res.safety_score} / 100</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full ${res.safety_score >= 80 ? 'bg-green-500' : (res.safety_score >= 50 ? 'bg-yellow-500' : 'bg-red-500')}" style="width: ${res.safety_score}%"></div>
+                </div>
+              </div>
+            </div>
+            ${domHtml}
+          </div>`;
+      }
+
+      function renderCategoryResult(results) {
+        const res = results.category_result;
+        if (!res) return '';
+        return `
+          <div class="border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-1.5 rounded-md flex-shrink-0">🏷️</span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-indigo-500">News Category Detector</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Detected Category: <span class="text-indigo-600 dark:text-indigo-400">${res.category}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${res.summary}</p>
+            <div class="mt-4 pt-3 border-t border-indigo-100 dark:border-indigo-900/30">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Confidence Level</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">${res.confidence}%</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="bg-indigo-600 h-1.5 rounded-full" style="width: ${res.confidence}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderAdScamResult(results) {
+        const res = results.ad_scam_result;
+        if (!res) return '';
+        let border = 'border-green-200 bg-green-50 dark:bg-green-950/20';
+        let verdictText = '🟢 Safe Advertisement';
+        let progress = 'bg-green-500';
+        if (res.verdict === 'Scam') {
+          border = 'border-red-200 bg-red-50 dark:bg-red-950/20';
+          verdictText = '🔴 Scam / Fraudulent Ad';
+          progress = 'bg-red-500';
+        } else if (res.verdict === 'Suspicious') {
+          border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20';
+          verdictText = '🟡 Suspicious Ad Claims';
+          progress = 'bg-yellow-500';
+        }
+        return `
+          <div class="border ${border} rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-widest">Ad Scam analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span>${verdictText}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${res.explanation}</p>
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Scam Probability</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">${res.scam_probability}%</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full ${progress}" style="width: ${res.scam_probability}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderShopScamResult(results) {
+        const res = results.shop_scam_result;
+        if (!res) return '';
+        let border = 'border-green-200 bg-green-50 dark:bg-green-950/20';
+        let verdictText = '🟢 Safe Shopping Deal';
+        let progress = 'bg-green-500';
+        if (res.verdict === 'Scam') {
+          border = 'border-red-200 bg-red-50 dark:bg-red-950/20';
+          verdictText = '🔴 Scam / Fake Offer';
+          progress = 'bg-red-500';
+        } else if (res.verdict === 'Suspicious') {
+          border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20';
+          verdictText = '🟡 Suspicious Deal';
+          progress = 'bg-yellow-500';
+        }
+        return `
+          <div class="border ${border} rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-widest">Shopping Offer analysis</span>
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span>${verdictText}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${res.explanation}</p>
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Scam Probability</p>
+              <div class="flex items-center gap-5">
+                <span class="text-2xl font-black text-gray-900 dark:text-white">${res.scam_probability}%</span>
+                <div class="flex-grow bg-gray-200 dark:bg-slate-800 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full ${progress}" style="width: ${res.scam_probability}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderImageResult(results, filename) {
+        const fact = results.fact_check;
+        if (!fact) return '';
+        let border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700';
+        if (fact.verdict.toUpperCase().includes('FALSE')) {
+          border = 'border-red-200 bg-red-50 dark:bg-red-950/20 text-red-700';
+        } else if (fact.verdict.toUpperCase().includes('TRUE')) {
+          border = 'border-green-200 bg-green-50 dark:bg-green-950/20 text-green-700';
+        }
+        return `
+          <div class="border ${border} rounded-xl p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-widest">Image Fact Check</span>
+            </div>
+            <p class="text-xs font-semibold text-gray-400 mb-1">Image: <span class="text-gray-700 font-normal">${filename}</span></p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span>${fact.verdict}</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${fact.explanation}</p>
+          </div>`;
+      }
+
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      async function clearHistory() {
+        const btn = document.getElementById('clear-history-btn');
+        if (!btn) return;
+        
+        // First click: ask for confirmation by changing button text
+        if (btn.dataset.confirming !== 'true') {
+          btn.dataset.confirming = 'true';
+          btn.innerText = 'Tap again to confirm';
+          btn.classList.add('bg-red-50', 'dark:bg-red-950/20');
+          
+          // Auto-reset after 3 seconds if not confirmed
+          setTimeout(() => {
+            btn.dataset.confirming = 'false';
+            btn.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+              Clear History`;
+            btn.classList.remove('bg-red-50', 'dark:bg-red-950/20');
+          }, 3000);
+          return;
+        }
+        
+        // Second click: confirmed — delete history
+        btn.dataset.confirming = 'false';
+        btn.innerText = 'Clearing...';
+        btn.disabled = true;
+        
+        try {
+          const res = await fetch('/api/history', { method: 'DELETE' });
+          const data = await res.json();
+          
+          if (data.success) {
+            currentHistory = [];
+            const historyList = document.getElementById('history-list');
+            const historyContainer = document.getElementById('history-container');
+            if (historyList) historyList.innerHTML = '';
+            if (historyContainer) historyContainer.classList.add('hidden');
+            
+            // Also hide any open history result view
+            const resultHistoryView = document.getElementById('result-history-view');
+            if (resultHistoryView) {
+              resultHistoryView.innerHTML = '';
+              resultHistoryView.classList.add('hidden');
+            }
+          }
+        } catch (e) {
+          console.error('Error clearing history:', e);
+        }
+        
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+          Clear History`;
+      }
+
       setMode(document.getElementById('predict_type').value);
     </script>
-  </body>
+  
+    <script>
+      document.querySelectorAll('a[href^="/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.target === '_blank' || e.ctrlKey || e.metaKey) return;
+          const target = this.href;
+          
+          // Exception for toggle theme button, auth links, or anchors
+          if(this.getAttribute('href').startsWith('#') || this.hasAttribute('onclick') || this.getAttribute('href') === '/logout') return;
+
+          e.preventDefault();
+          document.body.classList.remove('page-loaded');
+          setTimeout(() => { window.location.href = target; }, 100);
+        });
+      });
+    </script>
+</body>
+
 </html>

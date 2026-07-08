@@ -4,22 +4,72 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TruthShield | Fake News Detection</title>
+        
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Inter', sans-serif; }
       #mobile-menu { display: none; }
       #mobile-menu.open { display: block; }
     </style>
-  </head>
-  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+  
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+      function toggleDarkMode() {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      }
+    </script>
+  
+    <style>
+      /* Page Transition */
+      body {
+        opacity: 0;
+        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(12px);
+      }
+      body.page-loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('page-loaded');
+        });
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.add('page-loaded');
+        }
+      });
+    </script>
+</head>
+
+  <body class="bg-white dark:bg-slate-900 text-gray-900 dark:text-white min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
       <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <!-- Logo -->
         <a href="/" class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-white">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span class="text-lg font-black tracking-tight">Truth<span class="font-light">Shield</span></span>
@@ -27,25 +77,36 @@
 
         <!-- Desktop nav -->
         <div class="hidden md:flex items-center gap-8">
-          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
-            <a href="/" class="text-gray-900 font-semibold border-b-2 border-gray-900 pb-0.5">Home</a>
-            <a href="/predict" class="hover:text-gray-900 transition-colors">Prediction</a>
-            <a href="/about" class="hover:text-gray-900 transition-colors">About</a>
-            <a href="/contact" class="hover:text-gray-900 transition-colors">Contact</a>
+          <nav class="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-slate-400">
+            <a href="/" class="text-gray-900 dark:text-white font-semibold border-b-2 border-gray-900 dark:border-white pb-0.5">Home</a>
+            <a href="/predict" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Prediction</a>
+            <a href="/phone" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Phone Check</a>
+            <a href="/learn" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Learn</a>
+            <a href="/about" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">About</a>
+            <a href="/contact" class="hover:text-gray-900 dark:hover:text-white dark:text-white transition-colors">Contact</a>
+          
+            <button onclick="toggleDarkMode()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" aria-label="Toggle Dark Mode">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 dark:hidden">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            </button>
           </nav>
           {% if user %}
           <div class="flex items-center gap-2">
             {% if user.picture %}
-            <img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">
+            <img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">
             {% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
-            <a href="/logout" class="text-xs font-semibold text-gray-400 hover:text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
+            <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg transition-colors">Sign out</a>
           </div>
           {% endif %}
         </div>
 
         <!-- Mobile hamburger -->
-        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Open menu">
+        <button id="hamburger" onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-700 transition-colors" aria-label="Open menu">
           <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
@@ -56,22 +117,25 @@
       </div>
 
       <!-- Mobile menu -->
-      <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-white px-4 pb-4">
+      <div id="mobile-menu" class="md:hidden border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4">
         <nav class="flex flex-col gap-1 pt-3">
-          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 bg-gray-50">Home</a>
-          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Prediction</a>
-          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">About</a>
-          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Contact</a>
+          <a href="/" class="px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800">Home</a>
+          <a href="/predict" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Prediction</a>
+          <a href="/phone" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Phone Check</a>
+          <a href="/learn" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Learn</a>
+          <a href="/about" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">About</a>
+          <a href="/contact" class="px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 transition-colors">Contact</a>
+          <button onclick="toggleDarkMode()" class="px-3 py-2.5 text-left rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">Toggle Theme</button>
         </nav>
         {% if user %}
-        <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
             {% if user.picture %}
-            <img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200">
+            <img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700">
             {% endif %}
-            <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-slate-200">{{ user.name }}</span>
           </div>
-          <a href="/logout" class="text-xs font-semibold text-gray-400 border border-gray-200 px-3 py-1.5 rounded-lg">Sign out</a>
+          <a href="/logout" class="text-xs font-semibold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg">Sign out</a>
         </div>
         {% endif %}
       </div>
@@ -81,77 +145,498 @@
       <!-- Hero -->
       <section class="container mx-auto px-4 sm:px-6 py-14 sm:py-24 md:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-16">
         <div class="flex-1 max-w-xl w-full space-y-5 text-center md:text-left">
-          <span class="inline-block text-xs font-semibold tracking-widest text-gray-400 uppercase">Machine Learning Powered</span>
-          <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 leading-tight tracking-tight">
-            Verify the Truth<br><span class="font-light text-gray-400">in Real-Time.</span>
+          <span class="inline-block text-xs font-semibold tracking-widest text-gray-400 dark:text-slate-500 uppercase">Machine Learning Powered</span>
+          <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white leading-tight tracking-tight">
+            Verify the Truth<br><span class="font-light text-gray-400 dark:text-slate-500">in Real-Time.</span>
           </h1>
-          <p class="text-sm sm:text-base text-gray-500 font-light leading-relaxed max-w-md mx-auto md:mx-0">
+          <p class="text-sm sm:text-base text-gray-500 dark:text-slate-400 font-light leading-relaxed max-w-md mx-auto md:mx-0">
             Instantly detect misinformation in any news article or headline. Our Passive-Aggressive Classifier analyzes phrasing patterns with live Google Search grounding.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-            <a href="/predict" class="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors text-sm">
+            <a href="/predict" class="inline-flex items-center justify-center gap-2 bg-gray-900 dark:bg-indigo-600 hover:bg-gray-700 dark:hover:bg-indigo-700 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors text-sm">
               Get Started
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </a>
-            <a href="/about" class="inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-7 py-3.5 rounded-xl transition-colors text-sm">
+            <a href="/about" class="inline-flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-200 font-semibold px-7 py-3.5 rounded-xl transition-colors text-sm">
               How it works
             </a>
           </div>
         </div>
         <div class="flex-1 max-w-sm sm:max-w-md w-full">
-          <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 sm:p-6">
+          <div class="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-6">
             <img class="w-full rounded-xl select-none" alt="Fake News Verification" src="/static/hero_img.svg">
           </div>
         </div>
       </section>
 
-      <div class="border-t border-gray-100"></div>
+      <div class="border-t border-gray-100 dark:border-slate-800"></div>
 
       <!-- Features -->
-      <section class="bg-gray-50 py-14 sm:py-20">
+      <section class="bg-gray-50 dark:bg-slate-800 py-14 sm:py-20">
         <div class="container mx-auto px-4 sm:px-6">
-          <div class="text-center max-w-lg mx-auto mb-10 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Key Capabilities</h2>
-            <p class="text-gray-400 font-light mt-2 text-sm">Specialized models for verifying news at every level.</p>
+          <div class="text-center max-w-lg mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">TruthShield Verification Suite</h2>
+            <p class="text-gray-400 dark:text-slate-500 font-light mt-2 text-sm">9 professional AI-powered security and credibility tools in one unified dashboard.</p>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
-            <div class="bg-white border border-gray-200 rounded-xl p-5 sm:p-7">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16" /></svg>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <!-- 1. Headline Detection -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">📰</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">ML Classifier</span>
               </div>
-              <h3 class="text-sm font-bold text-gray-900 mb-1">Headline Detection</h3>
-              <p class="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">Detects clickbait, sensational titles, and unverified claims in short news headlines.</p>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Headline Detection</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Instantly checks news headlines and short titles for clickbait or unverified claims using vectorized machine learning models.</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-xl p-5 sm:p-7">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+
+            <!-- 2. Full Article Analysis -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">📄</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-300">Semantic AI</span>
               </div>
-              <h3 class="text-sm font-bold text-gray-900 mb-1">Full Text Analysis</h3>
-              <p class="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">Deep scan of full articles checking writing style, lexical variation, and semantic structure.</p>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Full Article Analysis</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Performs lexical variation, sentence structure analysis, and context evaluation on full-length news articles.</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-xl p-5 sm:p-7">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" /></svg>
+
+            <!-- 3. Smart Auto-Detect -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">🤖</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-300">Auto Router</span>
               </div>
-              <h3 class="text-sm font-bold text-gray-900 mb-1">Image Verification</h3>
-              <p class="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">Upload news screenshots. Gemini's vision model reads and fact-checks claims inside images.</p>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Smart Auto-Detect</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Automatically chooses the best matching machine learning model based on the character length of the pasted news text.</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-xl p-5 sm:p-7">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 4.5-9" /></svg>
+
+            <!-- 4. Media Image Verification -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">🖼️</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-300">Vision Model</span>
               </div>
-              <h3 class="text-sm font-bold text-gray-900 mb-1">Live Fact Check</h3>
-              <p class="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">Google Search grounding via Gemini API delivers real-time verdicts and citations.</p>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Image Fact Checking</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Scan news screenshots. Gemini's visual AI checks image context and cross-references claims against live global groundings.</p>
+            </div>
+
+            <!-- 5. Carrier SMS Scanner -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">💬</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-300">Scam Shield</span>
+              </div>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Carrier SMS Checker</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Scan incoming text messages. Automatically detects scam probability, malicious senders, and typical text phishing formats.</p>
+            </div>
+
+            <!-- 6. URL & SSL Inspector -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">🔗</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-300">Security DNS</span>
+              </div>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">URL Safety Inspector</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Checks web links for safety scores, resolves real-time host IP locations, checks SSL, and parses metadata.</p>
+            </div>
+
+            <!-- 7. News Category Detector -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">🏷️</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-300">Classifier</span>
+              </div>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">News Category Detector</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Automatically categorizes news into Politics, Business, Tech, Health, or Sports with high precision confidence metrics.</p>
+            </div>
+
+            <!-- 8. Advertisement Scam Checker -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">📢</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-300">Ad Watchdog</span>
+              </div>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Ad Scam Checker</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Analyzes advertising copy and sweepstakes to safeguard users from financial fraud, fake sponsors, and deceptive hooks.</p>
+            </div>
+
+            <!-- 9. Online Shopping Scam Guard -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 transition-all hover:shadow-md">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl">🛒</span>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-300">Commerce Shield</span>
+              </div>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Online Shopping Scan</h3>
+              <p class="text-xs text-gray-400 dark:text-slate-500 font-light leading-relaxed">Scans online store deals, pricing, and checkouts to alert users on counterfeit warnings or non-delivery risks.</p>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- LIVE STATISTICS SECTION -->
+      <section class="py-12 px-4 sm:px-6 border-t border-gray-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto">
+
+          <!-- Header -->
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-xl">📊</span>
+            <div>
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white">Live Statistics</h2>
+              <p class="text-xs text-gray-500 dark:text-slate-400">Real-time analysis results</p>
+            </div>
+            <span id="stats-live-badge" class="ml-auto text-[10px] font-bold px-2 py-1 rounded bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700">
+              Live
+            </span>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Left: Donut Chart -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-5 flex flex-col items-center justify-center">
+              <p class="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-4">Fake vs Real</p>
+              
+              <div class="relative w-40 h-40">
+                <canvas id="fakeRealChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <p id="chart-center-total" class="text-xl font-bold text-gray-900 dark:text-white">0</p>
+                  <p class="text-[9px] text-gray-500 dark:text-slate-400 uppercase tracking-widest">Total</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-4 mt-6">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded bg-gray-500 dark:bg-gray-400"></span>
+                  <span class="text-[10px] text-gray-600 dark:text-slate-400 uppercase">Fake</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded bg-gray-900 dark:bg-white"></span>
+                  <span class="text-[10px] text-gray-600 dark:text-slate-400 uppercase">Real</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Stat Cards -->
+            <div class="flex flex-col gap-3">
+              <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                <span class="text-sm font-medium text-gray-600 dark:text-slate-400">Analyses Today</span>
+                <span id="stat-today" class="text-lg font-bold text-gray-900 dark:text-white">—</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4">
+                  <p class="text-xs text-gray-500 dark:text-slate-400 mb-1">Fake Today</p>
+                  <p id="stat-fake-today" class="text-lg font-bold text-gray-900 dark:text-white">—</p>
+                  <div class="mt-2 h-1 bg-gray-100 dark:bg-slate-800 w-full"><div id="bar-fake" class="h-full bg-gray-500 dark:bg-gray-400" style="width:0%"></div></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4">
+                  <p class="text-xs text-gray-500 dark:text-slate-400 mb-1">Real Today</p>
+                  <p id="stat-real-today" class="text-lg font-bold text-gray-900 dark:text-white">—</p>
+                  <div class="mt-2 h-1 bg-gray-100 dark:bg-slate-800 w-full"><div id="bar-real" class="h-full bg-gray-900 dark:bg-white" style="width:0%"></div></div>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                <span class="text-sm font-medium text-gray-600 dark:text-slate-400">Total Analyses</span>
+                <span id="stat-total-all" class="text-lg font-bold text-gray-900 dark:text-white">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CYBER SAFETY TIPS SECTION -->
+      <section class="py-12 px-4 sm:px-6 border-t border-gray-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto">
+
+          <!-- Section Header -->
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-xl">⚠️</span>
+            <div>
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white">Cyber Safety Tips</h2>
+              <p class="text-xs text-gray-500 dark:text-slate-400">Stay safe online</p>
+            </div>
+            <span class="ml-auto text-[10px] font-bold px-2 py-1 rounded bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700">
+              Daily Tip
+            </span>
+          </div>
+
+          <!-- Tip Carousel -->
+          <div class="relative overflow-hidden rounded-2xl">
+            <div id="tips-track" class="flex transition-transform duration-500 ease-in-out">
+              <!-- Tips injected by JS -->
+            </div>
+          </div>
+
+          <!-- Dot Indicators -->
+          <div id="tip-dots" class="flex justify-center gap-2 mt-5"></div>
+
+          <!-- Prev / Next controls -->
+          <div class="flex justify-center gap-3 mt-4">
+            <button onclick="moveTip(-1)" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center hover:border-amber-400 hover:text-amber-500 dark:hover:border-amber-500 dark:hover:text-amber-400 transition-all text-gray-400 dark:text-slate-500 active:scale-95">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            </button>
+            <button onclick="moveTip(1)" class="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center hover:border-amber-400 hover:text-amber-500 dark:hover:border-amber-500 dark:hover:text-amber-400 transition-all text-gray-400 dark:text-slate-500 active:scale-95">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRUTH OR MYTH SECTION -->
+      <section class="py-12 px-4 sm:px-6 border-t border-gray-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto">
+          
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-xl">🤔</span>
+            <div>
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white">Truth or Myth</h2>
+              <p class="text-xs text-gray-500 dark:text-slate-400">Test your cyber knowledge</p>
+            </div>
+          </div>
+          
+          <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-5 sm:p-6">
+            <div id="tm-question-container">
+              <p id="tm-statement" class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-6">Loading statement...</p>
+              <div class="flex flex-wrap gap-3">
+                <button onclick="checkTruthOrMyth(true)" class="px-5 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-800 dark:text-gray-200 text-sm font-medium rounded border border-gray-200 dark:border-slate-700 transition-colors">Truth</button>
+                <button onclick="checkTruthOrMyth(false)" class="px-5 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-800 dark:text-gray-200 text-sm font-medium rounded border border-gray-200 dark:border-slate-700 transition-colors">Myth</button>
+              </div>
+            </div>
+            
+            <div id="tm-result-container" class="hidden mt-2 p-5 rounded-lg border">
+              <p id="tm-result-title" class="font-bold mb-2"></p>
+              <p id="tm-result-explanation" class="text-sm text-gray-600 dark:text-slate-400 mb-5 leading-relaxed"></p>
+              <button onclick="nextTruthOrMyth()" class="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline">Next Question &rarr;</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </main>
 
-    <footer class="border-t border-gray-100 py-6 text-center text-xs text-gray-400 font-light">
-      <p>&copy; 2026 TruthShield. All rights reserved.</p>
+    <script>
+      // ── Cyber Safety Tips Data ──────────────────────────────────────────────
+      const cyberTips = [
+        { icon: '🔐', color: 'from-violet-500 to-purple-600', shadow: 'shadow-violet-200 dark:shadow-violet-900/30', tag: 'OTP Safety', tip: 'Never share your OTP with anyone', detail: 'Banks and government apps will NEVER ask for your OTP over a call or message. Sharing it = handing over your account.' },
+        { icon: '🔗', color: 'from-blue-500 to-cyan-500', shadow: 'shadow-blue-200 dark:shadow-blue-900/30', tag: 'Link Safety', tip: 'Always check URLs before clicking', detail: 'Hover over any link to see where it really goes. Fake sites often use subtle misspellings like "amaz0n.com" or extra dashes.' },
+        { icon: '📶', color: 'from-rose-500 to-pink-600', shadow: 'shadow-rose-200 dark:shadow-rose-900/30', tag: 'Wi-Fi Alert', tip: 'Avoid public Wi-Fi for banking', detail: 'Open Wi-Fi has no encryption. Hackers can intercept your data. Use mobile data or a VPN for sensitive transactions.' },
+        { icon: '🛡️', color: 'from-emerald-500 to-teal-600', shadow: 'shadow-emerald-200 dark:shadow-emerald-900/30', tag: 'Password', tip: 'Use strong, unique passwords', detail: 'Use at least 12 characters with numbers and symbols. Never reuse passwords across sites — one breach can expose all.' },
+        { icon: '📲', color: 'from-amber-500 to-orange-500', shadow: 'shadow-amber-200 dark:shadow-amber-900/30', tag: 'App Safety', tip: 'Install apps only from official stores', detail: 'Sideloaded APKs and unofficial sources may contain malware. Stick to Google Play or Apple App Store only.' },
+        { icon: '📧', color: 'from-sky-500 to-indigo-500', shadow: 'shadow-sky-200 dark:shadow-sky-900/30', tag: 'Phishing', tip: 'Be suspicious of urgent email alerts', detail: '"Your account will be closed in 24 hours!" — this is a classic phishing trick. Always log in directly, never click email links.' },
+        { icon: '🔒', color: 'from-fuchsia-500 to-pink-500', shadow: 'shadow-fuchsia-200 dark:shadow-fuchsia-900/30', tag: '2FA Shield', tip: 'Enable Two-Factor Authentication', detail: 'Even if your password is stolen, 2FA adds a second lock. Enable it on email, banking, and social media accounts.' },
+        { icon: '🤳', color: 'from-lime-500 to-green-600', shadow: 'shadow-lime-200 dark:shadow-lime-900/30', tag: 'Privacy', tip: 'Limit personal info on social media', detail: 'DOB, phone number, hometown — scammers collect these to impersonate you or answer your security questions.' },
+      ];
+
+      let currentTip = new Date().getDay() % cyberTips.length; // Daily tip based on weekday
+      const track = document.getElementById('tips-track');
+      const dotsContainer = document.getElementById('tip-dots');
+
+      function renderTips() {
+        track.innerHTML = '';
+        dotsContainer.innerHTML = '';
+        cyberTips.forEach((t, i) => {
+          const slide = document.createElement('div');
+          slide.className = 'min-w-full px-1';
+          slide.innerHTML = `
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row gap-4 items-start">
+              <div class="text-2xl">${t.icon}</div>
+              <div>
+                <p class="text-xs font-bold text-gray-500 dark:text-slate-400 mb-1 uppercase tracking-widest">${t.tag}</p>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white mb-1">${t.tip}</p>
+                <p class="text-xs text-gray-500 dark:text-slate-400">${t.detail}</p>
+              </div>
+            </div>`;
+          track.appendChild(slide);
+
+          // Dot
+          const dot = document.createElement('button');
+          dot.className = `w-2 h-2 rounded bg-gray-200 dark:bg-slate-800 ${i === currentTip ? 'bg-gray-500 dark:bg-slate-500' : ''}`;
+          dot.onclick = () => goToTip(i);
+          dotsContainer.appendChild(dot);
+        });
+        track.style.transform = `translateX(-${currentTip * 100}%)`;
+      }
+
+      function updateDots() {
+        const dots = dotsContainer.querySelectorAll('button');
+        dots.forEach((d, i) => {
+          d.className = `w-2 h-2 rounded bg-gray-200 dark:bg-slate-800 ${i === currentTip ? 'bg-gray-500 dark:bg-slate-500' : ''}`;
+        });
+      }
+
+      function goToTip(index) {
+        currentTip = (index + cyberTips.length) % cyberTips.length;
+        track.style.transform = `translateX(-${currentTip * 100}%)`;
+        updateDots();
+      }
+
+      function moveTip(dir) { goToTip(currentTip + dir); }
+
+      // Auto-rotate every 5s
+      setInterval(() => moveTip(1), 5000);
+      renderTips();
+
+      // ── Live Statistics ────────────────────────────────────────────────────
+      let statsChart = null;
+
+      function animateCount(el, target) {
+        let start = 0;
+        const duration = 800;
+        const step = Math.ceil(target / (duration / 16));
+        const timer = setInterval(() => {
+          start = Math.min(start + step, target);
+          el.textContent = start;
+          if (start >= target) clearInterval(timer);
+        }, 16);
+      }
+
+      async function loadStats() {
+        try {
+          const res = await fetch('/api/stats');
+          const d = await res.json();
+          if (!d.success) return;
+
+          const isDark = document.documentElement.classList.contains('dark');
+
+          // Counter cards
+          const elToday = document.getElementById('stat-today');
+          const elFakeToday = document.getElementById('stat-fake-today');
+          const elRealToday = document.getElementById('stat-real-today');
+          const elTotal = document.getElementById('stat-total-all');
+          const elCenter = document.getElementById('chart-center-total');
+
+          animateCount(elToday, d.total_today);
+          animateCount(elFakeToday, d.fake_today);
+          animateCount(elRealToday, d.real_today);
+          animateCount(elTotal, d.total_all);
+          animateCount(elCenter, d.total_all);
+
+          // Progress bars (today)
+          const tot = d.fake_today + d.real_today || 1;
+          setTimeout(() => {
+            document.getElementById('bar-fake').style.width = Math.round(d.fake_today / tot * 100) + '%';
+            document.getElementById('bar-real').style.width = Math.round(d.real_today / tot * 100) + '%';
+          }, 200);
+
+          // Donut chart
+          const ctx = document.getElementById('fakeRealChart').getContext('2d');
+          const fakeVal = d.fake_all || 0;
+          const realVal = d.real_all || 0;
+          const hasData = fakeVal + realVal > 0;
+
+          const chartData = hasData ? [fakeVal, realVal] : [1, 1];
+          const chartColors = hasData
+            ? ['rgba(248,113,113,0.9)', 'rgba(52,211,153,0.9)']
+            : [isDark ? '#334155' : '#e5e7eb', isDark ? '#334155' : '#e5e7eb'];
+
+          if (statsChart) {
+            statsChart.data.datasets[0].data = chartData;
+            statsChart.data.datasets[0].backgroundColor = chartColors;
+            statsChart.update();
+          } else {
+            statsChart = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Fake / Scam', 'Real / Safe'],
+                datasets: [{
+                  data: chartData,
+                  backgroundColor: chartColors,
+                  borderWidth: 0,
+                  hoverOffset: 6,
+                }]
+              },
+              options: {
+                cutout: '72%',
+                plugins: { legend: { display: false }, tooltip: { enabled: hasData } },
+                animation: { animateRotate: true, duration: 900 },
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Stats load error:', e);
+        }
+      }
+
+      loadStats();
+      setInterval(loadStats, 30000); // refresh every 30s
+
+      // ── Truth or Myth ───────────────────────────────────────────────────────
+      const tmData = [
+        { statement: "Incognito mode completely hides your activity from everyone.", isTruth: false, exp: "Incognito mode only prevents your browser from saving local history. Your ISP, school, or workplace can still track you." },
+        { statement: "Mac computers cannot get viruses or malware.", isTruth: false, exp: "While historically less targeted than Windows PCs, Macs can and absolutely do get malware." },
+        { statement: "HTTPS sites are always safe and legitimate.", isTruth: false, exp: "HTTPS just means the connection is encrypted. Scammers easily get HTTPS certificates for fake phishing websites." },
+        { statement: "You should restart your phone or computer regularly.", isTruth: true, exp: "Restarting helps install pending security patches and OS updates properly." },
+        { statement: "Banks will never ask for your OTP or password over a call.", isTruth: true, exp: "True. Official bank reps will never ask you to reveal your OTP, PIN, or password verbally." }
+      ];
+      
+      let tmIndex = 0;
+      
+      function renderTruthOrMyth() {
+        document.getElementById('tm-question-container').classList.remove('hidden');
+        document.getElementById('tm-result-container').classList.add('hidden');
+        document.getElementById('tm-statement').innerText = tmData[tmIndex].statement;
+      }
+      
+      function checkTruthOrMyth(userSelectedTruth) {
+        const item = tmData[tmIndex];
+        const isCorrect = (userSelectedTruth === item.isTruth);
+        
+        document.getElementById('tm-question-container').classList.add('hidden');
+        const resContainer = document.getElementById('tm-result-container');
+        const resTitle = document.getElementById('tm-result-title');
+        
+        resContainer.classList.remove('hidden');
+        resContainer.className = `mt-2 p-5 rounded-lg border ${isCorrect ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'}`;
+        
+        resTitle.innerText = isCorrect ? "✅ Correct!" : "❌ Incorrect";
+        resTitle.className = `font-bold mb-2 ${isCorrect ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`;
+        
+        document.getElementById('tm-result-explanation').innerText = `The answer is ${item.isTruth ? 'Truth' : 'Myth'}. ${item.exp}`;
+      }
+      
+      function nextTruthOrMyth() {
+        tmIndex = (tmIndex + 1) % tmData.length;
+        renderTruthOrMyth();
+      }
+      
+      renderTruthOrMyth();
+
+    </script>
+
+    <footer class="border-t border-gray-100 dark:border-slate-800 py-8 px-4">
+      <div class="max-w-5xl mx-auto flex flex-col items-center gap-5">
+        <!-- Social Icons -->
+        <div class="flex items-center gap-5">
+          <!-- Instagram -->
+          <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-lg hover:shadow-pink-100 dark:hover:shadow-pink-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-pink-500 transition-colors duration-300">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors duration-300">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+          <!-- GitHub -->
+          <a href="https://github.com" target="_blank" aria-label="GitHub" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-gray-700 dark:hover:border-gray-400 hover:shadow-lg hover:shadow-gray-200 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+          <!-- WhatsApp -->
+          <a href="https://wa.me/" target="_blank" aria-label="WhatsApp" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg hover:shadow-green-100 dark:hover:shadow-green-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-green-500 transition-colors duration-300">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </a>
+        </div>
+        <!-- Copyright -->
+        <p class="text-xs text-gray-400 dark:text-slate-500 font-light">&copy; 2026 TruthShield. All rights reserved.</p>
+      </div>
     </footer>
 
     <script>
@@ -164,5 +649,22 @@
         iconClose.classList.toggle('hidden');
       }
     </script>
-  </body>
+  
+    <script>
+      document.querySelectorAll('a[href^="/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.target === '_blank' || e.ctrlKey || e.metaKey) return;
+          const target = this.href;
+          
+          // Exception for toggle theme button, auth links, or anchors
+          if(this.getAttribute('href').startsWith('#') || this.hasAttribute('onclick') || this.getAttribute('href') === '/logout') return;
+
+          e.preventDefault();
+          document.body.classList.remove('page-loaded');
+          setTimeout(() => { window.location.href = target; }, 100);
+        });
+      });
+    </script>
+</body>
+
 </html>

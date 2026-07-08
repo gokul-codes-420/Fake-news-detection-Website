@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Learn | TruthShield</title>
+    <meta name="description" content="Learn about fake news, phishing, deepfakes, and how to stay safe online.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; }
+      .acc-body.open { max-height: 1000px; opacity: 1; }
+    </style>
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+      function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      }
+    </script>
+  
+    <style>
+      /* Page Transition */
+      body {
+        opacity: 0;
+        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(12px);
+      }
+      body.page-loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('page-loaded');
+        });
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          document.body.classList.add('page-loaded');
+        }
+      });
+    </script>
+</head>
+
+
+  <body class="bg-white dark:bg-slate-950 text-gray-900 dark:text-white min-h-screen">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-gray-900 dark:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="text-base font-black">Truth<span class="font-light">Shield</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-gray-500 dark:text-slate-400 font-medium">
+          <a href="/" class="hover:text-gray-900 dark:hover:text-white transition-colors">Home</a>
+          <a href="/predict" class="hover:text-gray-900 dark:hover:text-white transition-colors">Prediction</a>
+          <a href="/learn" class="text-gray-900 dark:text-white font-semibold border-b-2 border-gray-900 dark:border-white pb-0.5">Learn</a>
+          <a href="/about" class="hover:text-gray-900 dark:hover:text-white transition-colors">About</a>
+          <a href="/contact" class="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
+          <button onclick="toggleDarkMode()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 dark:hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 hidden dark:block"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>
+          </button>
+        </nav>
+        <button onclick="toggleMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+          <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+          <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 dark:border-slate-800 px-4 pb-3">
+        <nav class="flex flex-col gap-0.5 pt-2 text-sm">
+          <a href="/" class="px-3 py-2 rounded-lg text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">Home</a>
+          <a href="/predict" class="px-3 py-2 rounded-lg text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">Prediction</a>
+          <a href="/learn" class="px-3 py-2 rounded-lg font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800">Learn</a>
+          <a href="/about" class="px-3 py-2 rounded-lg text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">About</a>
+          <a href="/contact" class="px-3 py-2 rounded-lg text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">Contact</a>
+          <button onclick="toggleDarkMode()" class="px-3 py-2 text-left rounded-lg text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">Toggle Theme</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+
+      <!-- Header -->
+      <div class="mb-10">
+        <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Knowledge Hub</p>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight mb-3">Learn to Stay Safe Online</h1>
+        <p class="text-sm text-gray-500 dark:text-slate-400 font-light leading-relaxed">Simple guides on the most common digital threats. Tap any topic to expand.</p>
+
+        <!-- Simple progress -->
+        <div class="flex items-center gap-3 mt-5">
+          <div class="flex gap-1.5" id="progress-dots"></div>
+          <span id="progress-text" class="text-xs text-gray-400 dark:text-slate-500">0 of 4 read</span>
+        </div>
+      </div>
+
+      <!-- Topics -->
+      <div class="divide-y divide-gray-100 dark:divide-slate-800 border border-gray-100 dark:border-slate-800 rounded-xl overflow-hidden">
+
+        <!-- 1. Fake News -->
+        <div>
+          <button onclick="toggle(0)" class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="text-lg">📰</span>
+            <div class="flex-1">
+              <span class="text-sm font-semibold text-gray-900 dark:text-white">What is Fake News?</span>
+              <span id="done-0" class="hidden ml-2 text-[10px] font-bold text-green-600 dark:text-green-400">✓ Read</span>
+            </div>
+            <svg id="arrow-0" class="w-4 h-4 text-gray-400 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+          </button>
+          <div id="body-0" class="acc-body">
+            <div class="px-5 pb-5 space-y-4 text-sm text-gray-600 dark:text-slate-400">
+              <p class="font-light leading-relaxed">Fake news is deliberately false or misleading information presented as real news. It spreads fast through social media and messaging apps.</p>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">Three types:</p>
+                <ul class="space-y-1.5 font-light">
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Misinformation</span> — False content shared without bad intent.</li>
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Disinformation</span> — Deliberately created to deceive people.</li>
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Malinformation</span> — Real info used out of context to cause harm.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">Warning signs:</p>
+                <ul class="space-y-1 font-light list-disc list-inside">
+                  <li>Shocking headlines with all-caps or excessive exclamation marks</li>
+                  <li>No author name or suspicious-looking website URL</li>
+                  <li>No other news outlet reporting the same story</li>
+                  <li>Out-of-context or manipulated images</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-3 text-xs">
+                💡 <strong>Tip:</strong> Use the <strong>SIFT</strong> method — Stop, Investigate the source, Find better coverage, Trace the claim.
+              </div>
+
+              <button onclick="markDone(0)" id="btn-0" class="text-xs font-semibold text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                Mark as Read
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Phishing -->
+        <div>
+          <button onclick="toggle(1)" class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="text-lg">🎣</span>
+            <div class="flex-1">
+              <span class="text-sm font-semibold text-gray-900 dark:text-white">What is Phishing?</span>
+              <span id="done-1" class="hidden ml-2 text-[10px] font-bold text-green-600 dark:text-green-400">✓ Read</span>
+            </div>
+            <svg id="arrow-1" class="w-4 h-4 text-gray-400 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+          </button>
+          <div id="body-1" class="acc-body">
+            <div class="px-5 pb-5 space-y-4 text-sm text-gray-600 dark:text-slate-400">
+              <p class="font-light leading-relaxed">Phishing is when attackers pretend to be trusted sources — banks, apps, or government — to steal your passwords, OTPs, or card details.</p>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">Common types:</p>
+                <ul class="space-y-1.5 font-light">
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Email Phishing</span> — Fake emails asking you to "verify" your account.</li>
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Smishing (SMS)</span> — Fake prize or alert messages with malicious links.</li>
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Vishing (Call)</span> — Calls pretending to be bank or police officers.</li>
+                  <li><span class="font-semibold text-gray-800 dark:text-slate-300">Spear Phishing</span> — Targeted attacks using your personal information.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">How to protect yourself:</p>
+                <ul class="space-y-1 font-light list-disc list-inside">
+                  <li>Never click links in suspicious SMS or emails</li>
+                  <li>Go directly to the website instead of clicking links</li>
+                  <li>Legitimate banks will NEVER ask for your OTP</li>
+                  <li>Enable Two-Factor Authentication (2FA)</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-3 text-xs">
+                ⚠️ Example: <em>"Your SBI account is blocked! Verify at sbi-secure-update.xyz"</em> — this is a phishing attack.
+              </div>
+
+              <button onclick="markDone(1)" id="btn-1" class="text-xs font-semibold text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                Mark as Read
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Deepfake -->
+        <div>
+          <button onclick="toggle(2)" class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="text-lg">🎭</span>
+            <div class="flex-1">
+              <span class="text-sm font-semibold text-gray-900 dark:text-white">What is Deepfake?</span>
+              <span id="done-2" class="hidden ml-2 text-[10px] font-bold text-green-600 dark:text-green-400">✓ Read</span>
+            </div>
+            <svg id="arrow-2" class="w-4 h-4 text-gray-400 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+          </button>
+          <div id="body-2" class="acc-body">
+            <div class="px-5 pb-5 space-y-4 text-sm text-gray-600 dark:text-slate-400">
+              <p class="font-light leading-relaxed">Deepfakes use AI to create realistic but fake videos, images, or audio of real people saying or doing things they never did.</p>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">How it works:</p>
+                <ol class="space-y-1 font-light list-decimal list-inside">
+                  <li>AI is trained on thousands of images/videos of a person</li>
+                  <li>It learns to mimic their face, voice, and expressions</li>
+                  <li>It generates realistic fake content that's very hard to spot</li>
+                </ol>
+              </div>
+
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-slate-200 mb-2">How to spot deepfakes:</p>
+                <ul class="space-y-1 font-light list-disc list-inside">
+                  <li>Unnatural blinking or frozen facial expressions</li>
+                  <li>Blurry or warped edges around hair and ears</li>
+                  <li>Voice doesn't match lip movements precisely</li>
+                  <li>Background looks inconsistent or glitchy</li>
+                </ul>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-3 text-xs">
+                💡 Use TruthShield's <a href="/predict" class="text-gray-700 dark:text-slate-300 underline">Image Checker</a> to detect AI-generated or manipulated images.
+              </div>
+
+              <button onclick="markDone(2)" id="btn-2" class="text-xs font-semibold text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                Mark as Read
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. How to Stay Safe -->
+        <div>
+          <button onclick="toggle(3)" class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="text-lg">🛡️</span>
+            <div class="flex-1">
+              <span class="text-sm font-semibold text-gray-900 dark:text-white">How to Stay Safe?</span>
+              <span id="done-3" class="hidden ml-2 text-[10px] font-bold text-green-600 dark:text-green-400">✓ Read</span>
+            </div>
+            <svg id="arrow-3" class="w-4 h-4 text-gray-400 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+          </button>
+          <div id="body-3" class="acc-body">
+            <div class="px-5 pb-5 space-y-4 text-sm text-gray-600 dark:text-slate-400">
+              <p class="font-light leading-relaxed">A few simple habits can protect you from most online threats.</p>
+
+              <ul class="space-y-2.5 font-light">
+                <li class="flex gap-2"><span>🔐</span><span><strong class="text-gray-800 dark:text-slate-300">Strong passwords</strong> — Use unique passwords for every account. Consider a password manager.</span></li>
+                <li class="flex gap-2"><span>📲</span><span><strong class="text-gray-800 dark:text-slate-300">Enable 2FA</strong> — Two-Factor Authentication adds a second lock even if your password is stolen.</span></li>
+                <li class="flex gap-2"><span>🔍</span><span><strong class="text-gray-800 dark:text-slate-300">Verify before sharing</strong> — Cross-check viral content with trusted sources before forwarding.</span></li>
+                <li class="flex gap-2"><span>🚫</span><span><strong class="text-gray-800 dark:text-slate-300">Never share OTPs</strong> — No bank or government will ever ask for your OTP.</span></li>
+                <li class="flex gap-2"><span>🔄</span><span><strong class="text-gray-800 dark:text-slate-300">Keep apps updated</strong> — Updates fix security vulnerabilities. Don't ignore them.</span></li>
+                <li class="flex gap-2"><span>📡</span><span><strong class="text-gray-800 dark:text-slate-300">Avoid public Wi-Fi</strong> — Use mobile data or a VPN for banking and email.</span></li>
+              </ul>
+
+              <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4 text-center">
+                <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Verify news, SMS, URLs, and images using TruthShield.</p>
+                <a href="/predict" class="inline-block bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                  Start Verifying →
+                </a>
+              </div>
+
+              <button onclick="markDone(3)" id="btn-3" class="text-xs font-semibold text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                Mark as Read
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- All done -->
+      <div id="all-done" class="hidden mt-8 border border-gray-200 dark:border-slate-700 rounded-xl p-6 text-center">
+        <p class="text-lg mb-1">🎉</p>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white mb-1">All topics read!</p>
+        <p class="text-xs text-gray-500 dark:text-slate-400 font-light mb-4">Now put your knowledge to use.</p>
+        <a href="/predict" class="inline-block bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+          Go to Prediction →
+        </a>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-100 dark:border-slate-800 py-8 px-4 mt-8">
+      <div class="max-w-5xl mx-auto flex flex-col items-center gap-5">
+        <div class="flex items-center gap-5">
+          <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-lg hover:shadow-pink-100 dark:hover:shadow-pink-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-pink-500 transition-colors duration-300"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors duration-300"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com" target="_blank" aria-label="GitHub" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-gray-700 dark:hover:border-gray-400 hover:shadow-lg hover:shadow-gray-200 dark:hover:shadow-gray-900/50 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://wa.me/" target="_blank" aria-label="WhatsApp" class="group w-9 h-9 rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg hover:shadow-green-100 dark:hover:shadow-green-950/30 transition-all duration-300 hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 group-hover:text-green-500 transition-colors duration-300"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-slate-500 font-light">&copy; 2026 TruthShield. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      function toggleMenu() {
+        const m = document.getElementById('mobile-menu');
+        const im = document.getElementById('icon-menu');
+        const ic = document.getElementById('icon-close');
+        const hidden = m.classList.contains('hidden');
+        m.classList.toggle('hidden', !hidden);
+        im.classList.toggle('hidden', hidden);
+        ic.classList.toggle('hidden', !hidden);
+      }
+
+      const open = new Set();
+      function toggle(i) {
+        const body = document.getElementById('body-' + i);
+        const arrow = document.getElementById('arrow-' + i);
+        if (open.has(i)) {
+          body.classList.remove('open');
+          arrow.style.transform = '';
+          open.delete(i);
+        } else {
+          body.classList.add('open');
+          arrow.style.transform = 'rotate(180deg)';
+          open.add(i);
+        }
+      }
+
+      const done = new Set();
+      function renderDots() {
+        const c = document.getElementById('progress-dots');
+        c.innerHTML = '';
+        for (let i = 0; i < 4; i++) {
+          const d = document.createElement('div');
+          d.className = done.has(i)
+            ? 'w-4 h-1.5 rounded-full bg-gray-900 dark:bg-white transition-all'
+            : 'w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-slate-700 transition-all';
+          c.appendChild(d);
+        }
+        document.getElementById('progress-text').textContent = done.size + ' of 4 read';
+      }
+
+      function markDone(i) {
+        done.add(i);
+        document.getElementById('done-' + i).classList.remove('hidden');
+        const btn = document.getElementById('btn-' + i);
+        btn.textContent = '✓ Done';
+        btn.disabled = true;
+        btn.classList.add('opacity-40', 'cursor-not-allowed');
+        renderDots();
+        if (done.size === 4) {
+          const banner = document.getElementById('all-done');
+          banner.classList.remove('hidden');
+          banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      renderDots();
+    </script>
+
+  
+    <script>
+      document.querySelectorAll('a[href^="/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.target === '_blank' || e.ctrlKey || e.metaKey) return;
+          const target = this.href;
+          
+          // Exception for toggle theme button, auth links, or anchors
+          if(this.getAttribute('href').startsWith('#') || this.hasAttribute('onclick') || this.getAttribute('href') === '/logout') return;
+
+          e.preventDefault();
+          document.body.classList.remove('page-loaded');
+          setTimeout(() => { window.location.href = target; }, 100);
+        });
+      });
+    </script>
+</body>
+
+</html>
