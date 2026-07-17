@@ -16,6 +16,8 @@
       body { font-family: 'Inter', sans-serif; }
       #mobile-menu { display: none; }
       #mobile-menu.open { display: block; }
+      .scrollbar-none::-webkit-scrollbar { display: none; }
+      .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
   
     <script>
@@ -58,12 +60,19 @@
       /* Page Transition */
       body {
         opacity: 0;
-        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-        transform: translateY(12px);
+        transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        transform: scale(0.97) translateY(16px);
+        filter: blur(4px);
       }
       body.page-loaded {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1) translateY(0);
+        filter: blur(0px);
+      }
+      body.page-exit {
+        opacity: 0;
+        transform: scale(1.02) translateY(-8px);
+        filter: blur(4px);
       }
     </style>
     <script>
@@ -151,83 +160,125 @@
         <p class="text-xs sm:text-sm text-gray-400 dark:text-slate-500 font-light mt-1">Verify news, media files, SMS messages, links, shopping deals, and advertisements using AI.</p>
       </div>
 
-      <!-- LIVE FACT CHECK RESULT -->
+           <!-- LIVE FACT CHECK RESULT -->
       {% if fact_check %}
       <div id="result-fact-check" class="mb-5">
         {% if fact_check.success %}
           {% if 'FALSE' in fact_check.verdict.upper() %}
-          <div class="border border-red-200 bg-red-50 rounded-xl p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="bg-red-100 text-red-600 p-1.5 rounded-md flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" /></svg>
-              </span>
-              <span class="text-xs font-semibold uppercase tracking-widest text-red-500">Live Fact Check</span>
-            </div>
-            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-red-600">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
-            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
-            {% if fact_check.sources %}
-            <div class="mt-3 pt-3 border-t border-red-100">
-              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
-              <div class="flex flex-wrap gap-2">
+          <!-- FALSE card -->
+          <div class="rounded-xl overflow-hidden border border-red-200 dark:border-red-900 bg-white dark:bg-slate-900 shadow-sm">
+            <div class="h-1 w-full bg-gradient-to-r from-red-500 to-rose-400"></div>
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 leading-none">Live Fact Check</p>
+                    <p class="text-sm font-bold text-red-600 dark:text-red-400 leading-tight mt-0.5">False</p>
+                  </div>
+                </div>
+                <button onclick="voiceRead('fact-check-exp', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072"/></svg>
+                  Read
+                </button>
+              </div>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+              {% if fact_check.sources %}
+              <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full transition-colors">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  {{ src.title | truncate(32) }}
+                </a>
                 {% endfor %}
               </div>
+              {% endif %}
             </div>
-            {% endif %}
           </div>
+
           {% elif 'TRUE' in fact_check.verdict.upper() %}
-          <div class="border border-green-200 bg-green-50 rounded-xl p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="bg-green-100 text-green-600 p-1.5 rounded-md flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </span>
-              <span class="text-xs font-semibold uppercase tracking-widest text-green-600">Live Fact Check</span>
-            </div>
-            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-green-700">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
-            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
-            {% if fact_check.sources %}
-            <div class="mt-3 pt-3 border-t border-green-100">
-              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
-              <div class="flex flex-wrap gap-2">
+          <!-- TRUE card -->
+          <div class="rounded-xl overflow-hidden border border-emerald-200 dark:border-emerald-900 bg-white dark:bg-slate-900 shadow-sm">
+            <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 leading-none">Live Fact Check</p>
+                    <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5">True</p>
+                  </div>
+                </div>
+                <button onclick="voiceRead('fact-check-exp', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072"/></svg>
+                  Read
+                </button>
+              </div>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+              {% if fact_check.sources %}
+              <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full transition-colors">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  {{ src.title | truncate(32) }}
+                </a>
                 {% endfor %}
               </div>
+              {% endif %}
             </div>
-            {% endif %}
           </div>
+
           {% else %}
-          <div class="border border-yellow-200 bg-yellow-50 rounded-xl p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="bg-yellow-100 text-yellow-600 p-1.5 rounded-md flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              </span>
-              <span class="text-xs font-semibold uppercase tracking-widest text-yellow-600">Live Fact Check</span>
-            </div>
-            <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="text-yellow-700">{{ fact_check.verdict }}</span></p>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
-            <button onclick="voiceRead('fact-check-exp', this)" class="mt-3 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-50 transition-colors">🔊 Voice Read</button>
-            {% if fact_check.sources %}
-            <div class="mt-3 pt-3 border-t border-yellow-100">
-              <p class="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sources</p>
-              <div class="flex flex-wrap gap-2">
+          <!-- MIXED/MISLEADING card -->
+          <div class="rounded-xl overflow-hidden border border-amber-200 dark:border-amber-900 bg-white dark:bg-slate-900 shadow-sm">
+            <div class="h-1 w-full bg-gradient-to-r from-amber-400 to-orange-400"></div>
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 leading-none">Live Fact Check</p>
+                    <p class="text-sm font-bold text-amber-600 dark:text-amber-400 leading-tight mt-0.5">{{ fact_check.verdict }}</p>
+                  </div>
+                </div>
+                <button onclick="voiceRead('fact-check-exp', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072"/></svg>
+                  Read
+                </button>
+              </div>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"><span id="fact-check-exp">{{ fact_check.explanation }}</span></p>
+              {% if fact_check.sources %}
+              <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 {% for src in fact_check.sources %}
-                <a href="{{ src.url }}" target="_blank" class="text-xs text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1 rounded-full hover:border-gray-400 transition-colors">{{ src.title | truncate(30) }}</a>
+                <a href="{{ src.url }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-900/20 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full transition-colors">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  {{ src.title | truncate(32) }}
+                </a>
                 {% endfor %}
               </div>
+              {% endif %}
             </div>
-            {% endif %}
           </div>
           {% endif %}
+
         {% else %}
-        <div class="border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-start gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-400 dark:text-slate-500 mt-0.5 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">API Fact-Check Failed</p>
-            <p class="text-xs sm:text-sm text-gray-600 dark:text-slate-300 font-light mt-0.5">{{ fact_check.error }}</p>
+        <!-- Error card -->
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+          <div class="h-1 w-full bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700"></div>
+          <div class="p-4 flex items-start gap-3">
+            <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">Fact-Check Unavailable</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ fact_check.error }}</p>
+            </div>
           </div>
         </div>
         {% endif %}
@@ -662,18 +713,18 @@
 
       <!-- FORM CARD -->
       <div class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 sm:p-6 bg-white dark:bg-slate-900">
-        <!-- Tabs — grid layout -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 bg-gray-100 dark:bg-slate-700 p-1 rounded-lg gap-1 mb-5 text-xs font-semibold text-center">
-          <button type="button" id="tab-headline" onclick="setMode('headline', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Headline</button>
-          <button type="button" id="tab-article" onclick="setMode('article', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Full Article</button>
-          <button type="button" id="tab-auto" onclick="setMode('auto', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Auto-Detect</button>
-          <button type="button" id="tab-image" onclick="setMode('image', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Image</button>
-          <button type="button" id="tab-sms" onclick="setMode('sms', true)" class="py-2.5 rounded-md transition-all cursor-pointer">SMS Checker</button>
-          <button type="button" id="tab-url" onclick="setMode('url', true)" class="py-2.5 rounded-md transition-all cursor-pointer">URL Checker</button>
+        <!-- Tabs — Scrollable on mobile, grid on desktop -->
+        <div class="flex overflow-x-auto whitespace-nowrap md:grid md:grid-cols-3 bg-gray-100 dark:bg-slate-700 p-1 rounded-lg gap-1 mb-5 text-xs font-semibold text-center scrollbar-none">
+          <button type="button" id="tab-headline" onclick="setMode('headline', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Headline</button>
+          <button type="button" id="tab-article" onclick="setMode('article', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Full Article</button>
+          <button type="button" id="tab-auto" onclick="setMode('auto', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Auto-Detect</button>
+          <button type="button" id="tab-image" onclick="setMode('image', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Image</button>
+          <button type="button" id="tab-sms" onclick="setMode('sms', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">SMS Checker</button>
+          <button type="button" id="tab-url" onclick="setMode('url', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">URL Checker</button>
           
-          <button type="button" id="tab-category" onclick="setMode('category', true)" class="py-2.5 rounded-md transition-all cursor-pointer">News Category</button>
-          <button type="button" id="tab-ad_scam" onclick="setMode('ad_scam', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Ad Scam Checker</button>
-          <button type="button" id="tab-shop_scam" onclick="setMode('shop_scam', true)" class="py-2.5 rounded-md transition-all cursor-pointer">Online Shopping</button>
+          <button type="button" id="tab-category" onclick="setMode('category', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">News Category</button>
+          <button type="button" id="tab-ad_scam" onclick="setMode('ad_scam', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Ad Scam Checker</button>
+          <button type="button" id="tab-shop_scam" onclick="setMode('shop_scam', true)" class="py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0">Online Shopping</button>
         </div>
 
         <form action="/predict" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -849,11 +900,11 @@
 
         tabs.forEach(t => {
           const btn = document.getElementById(`tab-${t}`);
-          if (btn) btn.className = 'py-2.5 rounded-md transition-all cursor-pointer text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100';
+          if (btn) btn.className = 'py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100';
         });
         
         const active = document.getElementById(`tab-${mode}`);
-        if (active) active.className = 'py-2.5 rounded-md transition-all cursor-pointer shadow-sm ' + config.tabClass;
+        if (active) active.className = 'py-2.5 px-4 md:px-0 rounded-md transition-all cursor-pointer inline-block md:block flex-shrink-0 shadow-sm ' + config.tabClass;
 
         if (isUserClick) {
           const resultIds = ['result-fact-check', 'result-ml', 'result-sms', 'result-url', 'result-category', 'result-ad-scam', 'result-shop-scam', 'result-history-view'];
@@ -1150,32 +1201,72 @@
         }
         
         if (fact && fact.success) {
-          const verd = fact.verdict;
-          const expl = fact.explanation;
+          const verd = fact.verdict || 'Unverified';
+          const expl = fact.explanation || '';
           const isFactFake = verd.toUpperCase().includes('FALSE');
           const isFactTrue = verd.toUpperCase().includes('TRUE');
           
-          let border = 'border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700';
-          let iconBg = 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300';
-          let verdColor = 'text-yellow-700 dark:text-yellow-400';
+          let borderClass = 'border-l-yellow-500';
+          let pingColor = 'bg-yellow-400';
+          let dotColor = 'bg-yellow-500';
+          let badgeClass = 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20';
+          let iconSvg = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+
           if (isFactFake) {
-            border = 'border-red-200 bg-red-50 dark:bg-red-950/20 text-red-700';
-            iconBg = 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300';
-            verdColor = 'text-red-700 dark:text-red-400';
+            borderClass = 'border-l-red-500';
+            pingColor = 'bg-red-400';
+            dotColor = 'bg-red-500';
+            badgeClass = 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20';
+            iconSvg = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
           } else if (isFactTrue) {
-            border = 'border-green-200 bg-green-50 dark:bg-green-950/20 text-green-700';
-            iconBg = 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300';
-            verdColor = 'text-green-700 dark:text-green-400';
+            borderClass = 'border-l-emerald-500';
+            pingColor = 'bg-emerald-400';
+            dotColor = 'bg-emerald-500';
+            badgeClass = 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20';
+            iconSvg = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
           }
-          
+
+          let sourcesHtml = '';
+          if (fact.sources && fact.sources.length > 0) {
+            let pills = '';
+            fact.sources.forEach(src => {
+              const truncTitle = src.title.length > 30 ? src.title.substring(0, 27) + '...' : src.title;
+              pills += `
+                <a href="${src.url}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 px-3.5 py-1.5 rounded-full transition-all active:scale-[0.98]">
+                  <svg class="w-3.5 h-3.5 text-slate-450 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  ${escapeHtml(truncTitle)}
+                </a>`;
+            });
+            sourcesHtml = `
+              <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">Sources</p>
+                <div class="flex flex-wrap gap-2">
+                  ${pills}
+                </div>
+              </div>`;
+          }
+
           html += `
-            <div class="border ${border} rounded-xl p-4 sm:p-5">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="${iconBg} p-1.5 rounded-md flex-shrink-0">🔍</span>
-                <span class="text-xs font-semibold uppercase tracking-widest">Live Fact Check</span>
+            <div class="border border-slate-200 dark:border-slate-800 border-l-4 ${borderClass} bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2">
+                  <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${pingColor}"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 ${dotColor}"></span>
+                  </span>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Live Fact Check</span>
+                </div>
+                <button onclick="voiceRead('fact-check-exp', this)" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-lg transition-colors">🔊 Voice Read</button>
               </div>
-              <p class="text-sm font-bold text-gray-900 dark:text-white">Verdict: <span class="${verdColor}">${verd}</span></p>
-              <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 font-light mt-1 leading-relaxed">${expl}</p>
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">Verdict:</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}">
+                  ${iconSvg}
+                  ${verd}
+                </span>
+              </div>
+              <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal"><span id="fact-check-exp">${expl}</span></p>
+              ${sourcesHtml}
             </div>`;
         }
         return html;
@@ -1479,7 +1570,8 @@
 
           e.preventDefault();
           document.body.classList.remove('page-loaded');
-          setTimeout(() => { window.location.href = target; }, 100);
+          document.body.classList.add('page-exit');
+          setTimeout(() => { window.location.href = target; }, 320);
         });
       });
     </script>
