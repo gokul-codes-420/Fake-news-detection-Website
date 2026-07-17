@@ -30,4 +30,6 @@ The model is pre-trained and available as `model.pkl` in this repository, allowi
 
 Feel free to explore the Jupyter Notebook (`Fake_News_Detector-PA.ipynb`) for more details about the model's training and performance.
 
+Explore Project -- Click It -- https://truthshield-detector.vercel.app
+
 
